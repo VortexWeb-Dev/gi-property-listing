@@ -54,7 +54,7 @@
     <a href="?page=add-property" class="btn btn-primary py-1.5 px-4 rounded-md"><i class="fas fa-plus me-2"></i>Create Listing</a>
 
     <!-- XML Publish Dropdown -->
-    <div class="admin-only dropdown me-2">
+    <!-- <div class="admin-only dropdown me-2">
       <button
         class="btn btn-outline-primary dropdown-toggle w-100"
         type="button"
@@ -70,7 +70,7 @@
         <li><a class="dropdown-item" href="dubizzle-xml.php">Dubizzle</a></li>
         <li><a class="dropdown-item" href="website-xml.php">Website</a></li>
       </ul>
-    </div>
+    </div> -->
 
     <!-- Bulk Actions Dropdown -->
     <div class="relative">
