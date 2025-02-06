@@ -1,7 +1,7 @@
 <?php
 define('C_REST_WEB_HOOK_URL', 'https://gicrm.ae/rest/1945/7mnw3te56u363prw/');
-// define('C_REST_CLIENT_ID', 'local.67a42e7604be80.81184164');
-// define('C_REST_CLIENT_SECRET', 'qNtQtuPsoke91xxeS2d45AF311Mlf5MdTHJ9zM0uQoiURPwOZt');
+define('C_REST_CLIENT_ID', 'local.67a42e7604be80.81184164');
+define('C_REST_CLIENT_SECRET', 'qNtQtuPsoke91xxeS2d45AF311Mlf5MdTHJ9zM0uQoiURPwOZt');
 
 define('DEVELOPERS_ENTITY_TYPE_ID', 1100);
 define('AGENTS_ENTITY_TYPE_ID', 1088);
