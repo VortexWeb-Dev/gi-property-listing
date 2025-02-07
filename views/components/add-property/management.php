@@ -19,6 +19,32 @@
             <label for="qr_code_url" class="block text-sm font-medium mb-2">Listing Owner <span class="text-danger">*</span></label>
             <select id="listing_owner" name="listing_owner" class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" required>
                 <option value="">Please select</option>
+                <option value="Abdallah Mohammad Saleem Damer">Abdallah Mohammad Saleem Damer</option>
+                <option value="Afrah Abdalaziz Mohammed Yahia">Afrah Abdalaziz Mohammed Yahia</option>
+                <option value="Ahmed Mohamed Mamdouh Mohamed Abozamel">Ahmed Mohamed Mamdouh Mohamed Abozamel</option>
+                <option value="Ahsan Hafeez">Ahsan Hafeez</option>
+                <option value="Alistair Watson">Alistair Watson</option>
+                <option value="Emad Mohamed Younes">Emad Mohamed Younes</option>
+                <option value="Faycal Brahimi">Faycal Brahimi</option>
+                <option value="Hossein Alamdar Mohammadi">Hossein Alamdar Mohammadi</option>
+                <option value="Laila Kastali">Laila Kastali</option>
+                <option value="Lamiya Adilova">Lamiya Adilova</option>
+                <option value="Lyna Mokhtari">Lyna Mokhtari</option>
+                <option value="Mahmoud Kizawi">Mahmoud Kizawi</option>
+                <option value="Manoj Kumar Hingorani">Manoj Kumar Hingorani</option>
+                <option value="Mariyam Kaltai">Mariyam Kaltai</option>
+                <option value="Mohamed Hamada Haggag Yousef">Mohamed Hamada Haggag Yousef</option>
+                <option value="Mohamed Mamdouh Mohamed Ibrahim Elfarash">Mohamed Mamdouh Mohamed Ibrahim Elfarash</option>
+                <option value="Mohamed Nagy Mohamed Khamis">Mohamed Nagy Mohamed Khamis</option>
+                <option value="Mohamed Saeed Abdelgaber Ahmed">Mohamed Saeed Abdelgaber Ahmed</option>
+                <option value="Mohammed Razy">Mohammed Razy</option>
+                <option value="Nichol Mistoso">Nichol Mistoso</option>
+                <option value="Odai Shoubaki">Odai Shoubaki</option>
+                <option value="Onyeka Joshua Ogbuefi">Onyeka Joshua Ogbuefi</option>
+                <option value="Rami Moustafa Abdelhamih Zaki">Rami Moustafa Abdelhamih Zaki</option>
+                <option value="Stephane Nito Sob">Stephane Nito Sob</option>
+                <option value="Thierno Birahim Ndao">Thierno Birahim Ndao</option>
+                <option value="Yanoula Evangelou">Yanoula Evangelou</option>
             </select>
         </div>
 
@@ -83,6 +109,7 @@
                     listingAgentSelect.appendChild(option);
                 });
 
+                /*
                 let owners = [];
                 const ownersResponse = await fetch(`${baseUrl}/user.get?select[0]=NAME&select[1]=LAST_NAME&order[NAME]=asc`);
                 const ownersData = await ownersResponse.json();
@@ -114,6 +141,7 @@
                     option.textContent = owner.NAME;
                     listingOwnerSelect.appendChild(option);
                 });
+                */
 
             } catch (error) {
                 console.error('Error fetching listing agents:', error);
