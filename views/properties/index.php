@@ -143,7 +143,6 @@
                             </button>
                             <ul class="dropdown-menu shadow absolute z-10" style="max-height: 50vh; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #6B7280 #f9fafb; font-size:medium;">
                                 <li><a class="dropdown-item" href="?page=edit-property&id=${property.id}"><i class="fa-solid fa-edit me-2"></i>Edit</a></li>
-                                <li><a class="dropdown-item" href="?page=view-property&id=${property.id}"><i class="fa-solid fa-eye me-2"></i>View Details</a></li>
                                 <li><button class="dropdown-item" onclick="handleAction('duplicate', ${property.id})"><i class="fa-solid fa-copy me-2"></i>Duplicate Listing</button></li>
                                 <li>
                                     <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#referenceModal" data-property-id="${property.id}" data-reference="${property.ufCrm37ReferenceNumber}">
@@ -180,7 +179,7 @@
                         <div class="flex">
                             <img class="w-20 h-20 rounded object-cover mr-4" src="${property.ufCrm37PhotoLinks[0] || 'https://via.placeholder.com/150'}" alt="${property.ufCrm37TitleEn || 'N/A'}">
                             <div class="text-sm">
-                                <p class="text-gray-800 font-semibold">${property.ufCrm37TitleEn || 'N/A'}</p>
+                                <p class="text-gray-800 font-semibold"><a class="hover:text-black/75 text-black text-semibold text-wrap text-decoration-none" href="?page=view-property&id=${property.id}">${property.ufCrm37TitleEn || 'N/A'}</a></p>
                                 <p class="text-gray-400 text-wrap max-w-full truncate">${property.ufCrm37DescriptionEn.slice(0, 60) + '...' || 'N/A'}</p>
                             </div>
                         </div>
