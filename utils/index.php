@@ -86,7 +86,7 @@ function getPropertyType($property)
         "DX" => "Duplex",
         "FF" => "Full floor",
         "HF" => "Half floor",
-        "LP" => "Land / Plot",
+        // "LP" => "Land / Plot",
         "PH" => "Penthouse",
         "TH" => "Townhouse",
         "VH" => "Villa",
@@ -98,7 +98,7 @@ function getPropertyType($property)
         "FA" => "Factory",
         "OF" => "Office space",
         "RE" => "Retail",
-        "LP" => "Plot",
+        "LP" => "Residential Plot",
         "SH" => "Shop",
         "SR" => "Show Room",
         "SA" => "Staff Accommodation"
