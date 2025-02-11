@@ -320,6 +320,26 @@ function formatPhotos($photos)
     return $xml;
 }
 
+function formatWebsitePhotos($photos)
+{
+    if (empty($photos)) {
+        return '';
+    }
+
+    $xml = '<more_photo>';
+
+    foreach ($photos as $index => $photo) {
+        $xml .= "<key_$index>";
+        $xml .= '<src>' . htmlspecialchars($photo) . '</src>';
+        $xml .= '<file_name>' . htmlspecialchars(basename($photo)) . '</file_name>';
+        $xml .= "</key_$index>";  // Properly closing the tag
+    }
+
+    $xml .= '</more_photo>';
+
+    return $xml;
+}
+
 function formatGeopoints($property)
 {
     $geopoints = $property['ufCrm37Geopoints'] ?? '';
@@ -327,17 +347,7 @@ function formatGeopoints($property)
     return formatField('geopoints', $geopoints);
 }
 
-/*************  ✨ Codeium Command ⭐  *************/
-/******  521842b9-e6cc-446d-a75f-b8fd81b168d2  *******/
 function formatCompletionStatus($property)
-/**
- * Formats the completion status of a property based on its project status.
- *
- * @param array $property The property data array containing the 'ufCrm37ProjectStatus' key.
- *
- * @return string The formatted XML string for the completion status, or an empty string if the status is not recognized.
- */
-
 {
     $status = $property['ufCrm37ProjectStatus'] ?? '';
     switch ($status) {
@@ -405,6 +415,124 @@ function generatePfXml($properties)
         $xml .= formatField('project_name', $property['ufCrm37ProjectName']);
         $xml .= formatCompletionStatus($property);
 
+        $xml .= '</property>';
+    }
+
+    $xml .= '</list>';
+    return $xml;
+}
+
+function generateWebsiteXml($properties)
+{
+    $xml = '<?xml version="1.0" encoding="UTF-8"?>';
+    $xml .= '<list last_update="' . date('Y-m-d H:i:s') . '">';
+
+    foreach ($properties as $property) {
+        $xml .= '<property last_update="' . formatDate($property['updatedTime'] ?? '') . '" id="' . htmlspecialchars($property['id'] ?? '') . '">';
+
+        $xml .= formatField('id', $property['id']);
+        $xml .= formatField('name', $property['ufCrm37TitleEn']);
+        $xml .= formatField('detail_text', $property['ufCrm37DescriptionEn']);
+        $xml .= formatField('price', $property['ufCrm37Price'] . ' AED');
+
+        $xml .= '<properties>';
+
+        $xml .= formatWebsitePhotos($property['ufCrm37PhotoLinks']);
+        $xml .= '<status>Live</status>';
+        $purposeMapping = [
+            'RS' => 'Sale',
+            'RR' => 'Rent',
+            'CS' => 'Sale',
+            'CR' => 'Rent'
+        ];
+
+        $offeringType = $property['ufCrm37OfferingType'] ?? ''; // Get the value safely
+        $purpose = $purposeMapping[$offeringType] ?? ''; // Map value or default to empty string
+
+        $xml .= "<property_purpose><key_0>" . htmlspecialchars($purpose) . "</key_0></property_purpose>";
+
+        // Adding the agent details
+        $xml .= "<link_to_employee>";
+        $xml .= "<id>" . htmlspecialchars($property['ufCrm37AgentId'] ?? '') . "</id>";
+        $xml .= "<login>" . htmlspecialchars($property['ufCrm37AgentEmail'] ?? '') . "</login>";
+        $xml .= "<full_name>" . htmlspecialchars($property['ufCrm37AgentName'] ?? '') . "</full_name>";
+        $xml .= "<email>" . htmlspecialchars($property['ufCrm37AgentEmail'] ?? '') . "</email>";
+        $xml .= "<phone>" . htmlspecialchars($property['ufCrm37AgentPhone'] ?? '') . "</phone>";
+        $xml .= "</link_to_employee>";
+        
+        $xml .= formatField('permit_number', getPermitNumber($property));
+        $xml .= formatField('bedrooms_number', $property['ufCrm37Bedroom']);
+        $xml .= formatField('bathrooms_number', $property['ufCrm37Bathroom']);
+        $xml .= formatField('bua_area_size', $property['ufCrm37Size']);
+        
+        $xml .= "<export_to>";
+
+        $exportPlatforms = [];
+        if ($property['ufCrmBayutEnable'] ?? '' === 'Y') {
+            $exportPlatforms[] = "Bayut";
+        }
+        if ($property['ufCrmDubizzleEnable'] ?? '' === 'Y') {
+            $exportPlatforms[] = "Dubizzle";
+        }
+        if ($property['ufCrmWebsiteEnable'] ?? '' === 'Y') {
+            $exportPlatforms[] = "Web";
+        }
+
+        foreach ($exportPlatforms as $index => $platform) {
+            $xml .= "<key_$index>" . htmlspecialchars($platform) . "</key_$index>";
+        }
+
+        $xml .= "</export_to>";
+
+        $xml .= formatField('title_deed_and_passport', $property['ufCrm37TitleDeed']);
+        $xml .= formatField('availability_date_for_rental', $property['ufCrm37AvailableFrom']);
+        $xml .= formatField('plot_size', $property['ufCrm37TotalPlotSize']);
+        $xml .= formatField('yearly_service_charge', $property['ufCrm37ServiceCharge']);
+        $xml .= formatField('cheques', $property['ufCrm37NoOfCheques']);
+        $xml .= formatField('parking_slots', $property['ufCrm37Parking']);
+        $xml .= formatField('link_city', $property['ufCrm37City']);
+        $xml .= formatField('link_district', $property['ufCrm37Community']);
+        $xml .= formatField('link_subarea', $property['ufCrm37SubCommunity']);
+        $purposeMapping = [
+            'RS' => 'Residential Sale',
+            'RR' => 'Residential Rent',
+            'CS' => 'Commercial Sale',
+            'CR' => 'Commercial Rent'
+        ];
+
+        $offeringType = $property['ufCrm37OfferingType'] ?? ''; // Get the value safely
+        $purpose = $purposeMapping[$offeringType] ?? ''; // Map value or default to empty string
+
+        $xml .= "<offering_type>" . htmlspecialchars($purpose) . "</offering_type>";
+        $xml .= formatField('property_ref_no', $property['ufCrm37ReferenceNumber']);
+
+        // $xml .= formatField('property_type', $property['ufCrm37PropertyType']);
+        // $xml .= formatPriceOnApplication($property);
+        // $xml .= formatRentalPrice($property);
+        // $xml .= formatField('service_charge', $property['ufCrm37ServiceCharge']);
+        // $xml .= formatField('cheques', $property['ufCrm37NoOfCheques']);
+        // $xml .= formatField('property_name', $property['ufCrm37Tower']);
+        // $xml .= formatField('title_ar', $property['ufCrm37TitleAr']);
+        // $xml .= formatField('description_ar', $property['ufCrm37DescriptionAr']);
+        // $xml .= formatField('plot_size', $property['ufCrm37TotalPlotSize']);
+        // $xml .= formatField('size', $property['ufCrm37Size']);
+        // $xml .= formatField('bedroom', $property['ufCrm37Bedroom']);
+        // $xml .= formatBedroom($property);
+        // $xml .= formatBathroom($property);
+        // $xml .= formatAgent($property);
+        // $xml .= formatField('build_year', $property['ufCrm37BuildYear']);
+        // $xml .= formatField('parking', $property['ufCrm37Parking']);
+        // $xml .= formatFurnished($property);
+        // $xml .= formatField('view360', $property['ufCrm_37_360_VIEW_URL']);
+        // $xml .= formatField('floor_plan', $property['ufCrm37FloorPlan']);
+        // $xml .= formatGeopoints($property);
+        // $xml .= formatField('availability_date', $property['ufCrm37AvailableFrom'], 'date');
+        // $xml .= formatField('video_tour_url', $property['ufCrm37VideoTourUrl']);
+        // $xml .= formatField('developer', $property['ufCrm37Developers']);
+        // $xml .= formatField('project_name', $property['ufCrm37ProjectName']);
+        // $xml .= formatCompletionStatus($property);
+
+        $xml .= '</properties>';
         $xml .= '</property>';
     }
 

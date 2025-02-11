@@ -62,7 +62,7 @@ $fields = [
 $properties = fetchAllProperties($baseUrl, $entityTypeId, $fields, 'website');
 
 if (count($properties) > 0) {
-    $xml = generatePfXml($properties);
+    $xml = generateWebsiteXml($properties);
     echo $xml;
 } else {
     echo '<?xml version="1.0" encoding="UTF-8"?><list></list>';
