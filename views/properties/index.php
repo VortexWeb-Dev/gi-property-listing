@@ -25,7 +25,8 @@
                                 <th scope="col" class="px-3 py-3 text-start text-xs font-medium text-gray-500 uppercase">Size</th>
                                 <th scope="col" class="px-3 py-3 text-start text-xs font-medium text-gray-500 uppercase">Price</th>
                                 <th scope="col" class="px-3 py-3 text-start text-xs font-medium text-gray-500 uppercase">Unit Status</th>
-                                <th scope="col" class="px-3 py-3 text-start text-xs font-medium text-gray-500 uppercase">Location</th>
+                                <th scope="col" class="px-3 py-3 text-start text-xs font-medium text-gray-500 uppercase">PF</th>
+                                <th scope="col" class="px-3 py-3 text-start text-xs font-medium text-gray-500 uppercase">Bayut</th>
                                 <th scope="col" class="px-3 py-3 text-start text-xs font-medium text-gray-500 uppercase">Listing Agent and Owner</th>
                                 <th scope="col" class="px-3 py-3 text-start text-xs font-medium text-gray-500 uppercase min-w-[200px]">Published Portals</th>
                                 <th scope="col" class="px-3 py-3 text-start text-xs font-medium text-gray-500 uppercase">Created On</th>
@@ -64,7 +65,7 @@
         const baseUrl = API_BASE_URL;
         const entityTypeId = LISTINGS_ENTITY_TYPE_ID;
         const fields = [
-            'id', 'ufCrm37ReferenceNumber', 'ufCrm37OfferingType', 'ufCrm37PropertyType', 'ufCrm37Price', 'ufCrm37TitleEn', 'ufCrm37DescriptionEn', 'ufCrm37Size', 'ufCrm37Bedroom', 'ufCrm37Bathroom', 'ufCrm37PhotoLinks', 'ufCrm37AgentName', 'ufCrm37City', 'ufCrm37Community', 'ufCrm37SubCommunity', 'ufCrm37Tower', 'ufCrm37PfEnable', 'ufCrm37BayutEnable', 'ufCrm37DubizzleEnable', 'ufCrm37WebsiteEnable', 'ufCrm37ListingOwner', 'ufCrm37Status', 'ufCrm37RentalPeriod', 'createdTime', 'ufCrm37TitleDeed'
+            'id', 'ufCrm37ReferenceNumber', 'ufCrm37OfferingType', 'ufCrm37PropertyType', 'ufCrm37Price', 'ufCrm37TitleEn', 'ufCrm37DescriptionEn', 'ufCrm37Size', 'ufCrm37Bedroom', 'ufCrm37Bathroom', 'ufCrm37PhotoLinks', 'ufCrm37AgentName', 'ufCrm37City', 'ufCrm37Community', 'ufCrm37SubCommunity', 'ufCrm37Tower', 'ufCrm37BayutCity', 'ufCrm37BayutCommunity', 'ufCrm37BayutSubCommunity', 'ufCrm37BayutTower', 'ufCrm37PfEnable', 'ufCrm37BayutEnable', 'ufCrm37DubizzleEnable', 'ufCrm37WebsiteEnable', 'ufCrm37ListingOwner', 'ufCrm37Status', 'ufCrm37RentalPeriod', 'createdTime', 'ufCrm37TitleDeed'
         ];
         const orderBy = {
             id: 'desc'
@@ -221,6 +222,24 @@
                             ${[
                                 property.ufCrm37SubCommunity,
                                 property.ufCrm37Tower
+                            ]
+                            .filter(Boolean)
+                            .join(' - ') || ''}
+                        </p>
+                    </td>
+                    <td class="px-3 py-4 whitespace-nowrap text-xs font-medium text-gray-800">
+                        <p>
+                            ${[
+                                property.ufCrm37BayutCity,
+                                property.ufCrm37BayutCommunity,
+                            ]
+                            .filter(Boolean)
+                            .join(' - ') || ''}
+                        </p>
+                        <p>
+                            ${[
+                                property.ufCrm37BayutSubCommunity,
+                                property.ufCrm37BayutTower
                             ]
                             .filter(Boolean)
                             .join(' - ') || ''}
