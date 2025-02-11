@@ -468,13 +468,13 @@ function generateWebsiteXml($properties)
         $xml .= "<export_to>";
 
         $exportPlatforms = [];
-        if ($property['ufCrmBayutEnable'] ?? '' === 'Y') {
+        if ($property['ufCrm37BayutEnable'] ?? '' == 'Y') {
             $exportPlatforms[] = "Bayut";
         }
-        if ($property['ufCrmDubizzleEnable'] ?? '' === 'Y') {
+        if ($property['ufCrm37DubizzleEnable'] ?? '' == 'Y') {
             $exportPlatforms[] = "Dubizzle";
         }
-        if ($property['ufCrmWebsiteEnable'] ?? '' === 'Y') {
+        if ($property['ufCrm37WebsiteEnable'] ?? '' == 'Y') {
             $exportPlatforms[] = "Web";
         }
 
