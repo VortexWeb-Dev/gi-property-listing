@@ -12,8 +12,8 @@
         <!-- Column 1 -->
         <div>
             <label for="description_en" class="block text-sm font-medium mb-2">Description (English) <span class="text-danger">*</span></label>
-            <textarea id="description_en" name="description_en" maxlength="1500" oninput="updateCharCount('descriptionEnCount', this.value.length, 1500);" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" rows="15" required></textarea>
-            <small class="text-xs text-gray-500"><span id="descriptionEnCount">0</span> / 1500 characters</small>
+            <textarea id="description_en" name="description_en" maxlength="10000" oninput="updateCharCount('descriptionEnCount', this.value.length, 10000);" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" rows="15" required></textarea>
+            <small class="text-xs text-gray-500"><span id="descriptionEnCount">0</span> / 10000 characters</small>
         </div>
 
         <!-- Column 1 -->
@@ -26,8 +26,8 @@
         <!-- Column 1 -->
         <div>
             <label for="description_ar" class="block text-sm font-medium mb-2">Description (Arabic)</label>
-            <textarea id="description_ar" name="description_ar" maxlength="1500" oninput="updateCharCount('descriptionArCount', this.value.length, 1500);" lang="ar" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" rows="15"></textarea>
-            <small class="text-xs text-gray-500"><span id="descriptionArCount">0</span> / 1500 characters</small>
+            <textarea id="description_ar" name="description_ar" maxlength="10000" oninput="updateCharCount('descriptionArCount', this.value.length, 10000);" lang="ar" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" rows="15"></textarea>
+            <small class="text-xs text-gray-500"><span id="descriptionArCount">0</span> / 10000 characters</small>
         </div>
 
         <!-- Column 1 -->

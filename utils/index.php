@@ -506,7 +506,8 @@ function generateWebsiteXml($properties)
         $xml .= "<offering_type>" . htmlspecialchars($purpose) . "</offering_type>";
         $xml .= formatField('property_ref_no', $property['ufCrm37ReferenceNumber']);
 
-        // $xml .= formatField('property_type', $property['ufCrm37PropertyType']);
+        $xml .= formatField('property_type', getPropertyType($property));
+
         // $xml .= formatPriceOnApplication($property);
         // $xml .= formatRentalPrice($property);
         // $xml .= formatField('service_charge', $property['ufCrm37ServiceCharge']);
