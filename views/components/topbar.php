@@ -61,5 +61,5 @@ if (isset($_GET['page'])) {
         }
     }
 
-    getListingCount();
+    // getListingCount();
 </script>

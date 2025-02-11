@@ -119,6 +119,8 @@
             const properties = data.result?.items || [];
             const totalCount = data.total || 0;
 
+            document.getElementById('listingCount').textContent = totalCount
+
             totalPages = Math.ceil(totalCount / pageSize);
 
             prevPage.disabled = page === 1;
