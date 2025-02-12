@@ -22,7 +22,7 @@
         <div class="max-w-sm">
             <label for="hide_price" class="block text-sm font-medium mb-2">Hide Price? (Property Finder only)</label>
             <div class="flex">
-                <input type="checkbox" id="hide_price" name="hide_price" class="shrink-0 mt-0.5 border-gray-200 rounded text-blue-600 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" id="hs-default-checkbox" checked>
+                <input type="checkbox" id="hide_price" name="hide_price" class="shrink-0 mt-0.5 border-gray-200 rounded text-blue-600 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" id="hs-default-checkbox">
             </div>
         </div>
 
