@@ -366,6 +366,41 @@ function formatCompletionStatus($property)
     }
 }
 
+function formatAmenities($property)
+{
+    $private_amenities_ids = [
+        'AC', 'BA', 'BK', 'BL', 'BW', 'CP', 'CS', 'LB', 'MR', 'MS',
+        'PA', 'PG', 'PJ', 'PP', 'PY', 'VC', 'SE', 'SP', 'SS', 'ST',
+        'SY', 'VW', 'WC', 'CO', 'PR', 'BR'
+    ];
+
+    $commercial_amenities_ids = [
+        'CR', 'AN', 'DN', 'LB', 'SP', 'SY', 'CP', 'VC', 'PN', 'MZ'
+    ];
+
+    $amenities = $property['ufCrm37Amenities'] ?? [];
+
+    $private_xml = '<private_amenities>';
+    $commercial_xml = '<commercial_amenities>';
+
+    foreach ($amenities as $amenity) {
+        if (strlen($amenity) > 2) continue;
+
+        if (in_array($amenity, $private_amenities_ids)) {
+            $private_xml .= $amenity . ', ';
+        }
+
+        if (in_array($amenity, $commercial_amenities_ids)) {
+            $commercial_xml .= $amenity . ', ';
+        }
+    }
+
+    $private_xml = rtrim($private_xml, ', ') . '</private_amenities>';
+    $commercial_xml = rtrim($commercial_xml, ', ') . '</commercial_amenities>';
+
+    return $private_xml . $commercial_xml;
+}
+
 function generatePfXml($properties)
 {
     $xml = '<?xml version="1.0" encoding="UTF-8"?>';
@@ -414,6 +449,7 @@ function generatePfXml($properties)
         $xml .= formatField('developer', $property['ufCrm37Developers']);
         $xml .= formatField('project_name', $property['ufCrm37ProjectName']);
         $xml .= formatCompletionStatus($property);
+        $xml .= formatAmenities($property);
 
         $xml .= '</property>';
     }
@@ -459,12 +495,12 @@ function generateWebsiteXml($properties)
         $xml .= "<email>" . htmlspecialchars($property['ufCrm37AgentEmail'] ?? '') . "</email>";
         $xml .= "<phone>" . htmlspecialchars($property['ufCrm37AgentPhone'] ?? '') . "</phone>";
         $xml .= "</link_to_employee>";
-        
+
         $xml .= formatField('permit_number', getPermitNumber($property));
         $xml .= formatField('bedrooms_number', $property['ufCrm37Bedroom']);
         $xml .= formatField('bathrooms_number', $property['ufCrm37Bathroom']);
         $xml .= formatField('bua_area_size', $property['ufCrm37Size']);
-        
+
         $xml .= "<export_to>";
 
         $exportPlatforms = [];
