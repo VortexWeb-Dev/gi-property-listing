@@ -150,5 +150,11 @@
 
         fetchAndDisplayOptions();
 
+        const timestamp = new Date().getTime().toString();
+        const first4 = timestamp.slice(0, 4);
+        const last4 = timestamp.slice(-4);
+        const newReferenceNumber = 'giproperties-' + first4 + last4;
+        document.getElementById('reference').value = newReferenceNumber;
+
     });
 </script>
