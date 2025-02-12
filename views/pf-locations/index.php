@@ -44,7 +44,7 @@
     async function fetchLocations(page = 1) {
         const baseUrl = API_BASE_URL;
         const entityTypeId = PF_LOCATIONS_ENTITY_ID;
-        const apiUrl = `${baseUrl}/crm.item.list?entityTypeId=${entityTypeId}&order[id]=desc&select[0]=id&select[1]=ufCrm39Location&start=${(page - 1) * pageSize}`;
+        const apiUrl = `${baseUrl}/crm.item.list?entityTypeId=${entityTypeId}&order[id]=desc&select[0]=id&select[1]=ufCrm44Location&start=${(page - 1) * pageSize}`;
 
         const loading = document.getElementById('loading');
         const locationTable = document.getElementById('location-table');
@@ -83,7 +83,7 @@
                     (location) => `
                 <tr>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">${location.id}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">${location.ufCrm39Location || 'N/A'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">${location.ufCrm44Location || 'N/A'}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
                         <button onClick="deleteLocation(${location.id})" type="button" class="inline-flex items-center gap-x-2 text-sm font-semibold text-blue-600 hover:text-blue-800 focus:outline-none focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none">Delete</button>
                     </td>

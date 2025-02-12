@@ -28,10 +28,10 @@
             const webhookUrl = `${API_BASE_URL}crm.item.list`;
 
             const data = {
-                "entityTypeId": 1092, // Already correct
-                "select": ["id", "ufCrm39Building"], // Updated field name
+                "entityTypeId": PF_LOCATIONS_ENTITY_ID, // Already correct
+                "select": ["id", "ufCrm44Building"], // Updated field name
                 "filter": {
-                    "%ufCrm39Building": query // Updated field name in filter
+                    "%ufCrm44Building": query // Updated field name in filter
                 }
             };
 
@@ -61,8 +61,8 @@
 
                         // Filter out duplicates while preserving order
                         items.forEach(item => {
-                            if (!uniqueBuildings.has(item.ufCrm39Building)) {
-                                uniqueBuildings.add(item.ufCrm39Building);
+                            if (!uniqueBuildings.has(item.ufCrm44Building)) {
+                                uniqueBuildings.add(item.ufCrm44Building);
                                 uniqueItems.push(item);
                             }
                         });
@@ -72,10 +72,10 @@
                             const itemElement = document.createElement('li');
                             itemElement.classList.add('list-group-item');
                             itemElement.style.cursor = 'pointer';
-                            itemElement.innerHTML = item.ufCrm39Building;
+                            itemElement.innerHTML = item.ufCrm44Building;
 
                             itemElement.addEventListener('click', function() {
-                                searchInput.value = item.ufCrm39Building;
+                                searchInput.value = item.ufCrm44Building;
                                 popup.classList.add('d-none');
                                 resultContainer.innerHTML = '';
                             });

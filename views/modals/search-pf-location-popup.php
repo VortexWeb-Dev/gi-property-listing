@@ -43,9 +43,9 @@
             const webhookUrl = `${API_BASE_URL}crm.item.list`;
             const data = {
                 entityTypeId: PF_LOCATIONS_ENTITY_ID,
-                select: ["id", "ufCrm39Location", "ufCrm39City", "ufCrm39Community", "ufCrm39SubCommunity", "ufCrm39Building"],
+                select: ["id", "ufCrm44Location", "ufCrm44City", "ufCrm44Community", "ufCrm44SubCommunity", "ufCrm44Building"],
                 filter: {
-                    "%ufCrm39Location": query
+                    "%ufCrm44Location": query
                 }
             };
 
@@ -77,12 +77,12 @@
                 items.forEach(item => {
                     const itemElement = document.createElement('li');
                     itemElement.classList.add('p-2', 'cursor-pointer', 'border-b', 'hover:bg-gray-100', 'text-gray-700');
-                    itemElement.innerText = item.ufCrm39Location;
+                    itemElement.innerText = item.ufCrm44Location;
 
                     itemElement.addEventListener('click', () => {
-                        searchInput.value = item.ufCrm39Location;
+                        searchInput.value = item.ufCrm44Location;
                         togglePopup(false);
-                        autofillLocation(item.ufCrm39Location, item.ufCrm39City, item.ufCrm39Community, item.ufCrm39SubCommunity, item.ufCrm39Building);
+                        autofillLocation(item.ufCrm44Location, item.ufCrm44City, item.ufCrm44Community, item.ufCrm44SubCommunity, item.ufCrm44Building);
                     });
 
                     resultContainer.appendChild(itemElement);

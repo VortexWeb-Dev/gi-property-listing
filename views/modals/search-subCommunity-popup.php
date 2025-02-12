@@ -28,10 +28,10 @@
             const webhookUrl = `${API_BASE_URL}crm.item.list`;
 
             const data = {
-                "entityTypeId": 1092, // Updated entity ID
-                "select": ["id", "ufCrm39SubCommunity"], // Updated field name
+                "entityTypeId": PF_LOCATIONS_ENTITY_ID, // Updated entity ID
+                "select": ["id", "ufCrm44SubCommunity"], // Updated field name
                 "filter": {
-                    "%ufCrm39SubCommunity": query // Updated field name in filter
+                    "%ufCrm44SubCommunity": query // Updated field name in filter
                 }
             };
 
@@ -61,8 +61,8 @@
 
                         // Filter out duplicates while preserving order
                         items.forEach(item => {
-                            if (!uniqueSubCommunities.has(item.ufCrm39SubCommunity)) {
-                                uniqueSubCommunities.add(item.ufCrm39SubCommunity);
+                            if (!uniqueSubCommunities.has(item.ufCrm44SubCommunity)) {
+                                uniqueSubCommunities.add(item.ufCrm44SubCommunity);
                                 uniqueItems.push(item);
                             }
                         });
@@ -72,10 +72,10 @@
                             const itemElement = document.createElement('li');
                             itemElement.classList.add('list-group-item');
                             itemElement.style.cursor = 'pointer';
-                            itemElement.innerHTML = item.ufCrm39SubCommunity;
+                            itemElement.innerHTML = item.ufCrm44SubCommunity;
 
                             itemElement.addEventListener('click', function() {
-                                searchInput.value = item.ufCrm39SubCommunity;
+                                searchInput.value = item.ufCrm44SubCommunity;
                                 popup.classList.add('d-none');
                                 resultContainer.innerHTML = '';
                             });

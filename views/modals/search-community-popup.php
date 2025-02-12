@@ -28,67 +28,67 @@
             const webhookUrl = `${API_BASE_URL}crm.item.list`;
 
             const data = {
-                "entityTypeId": 1092,  // Updated entity ID
-                "select": ["id", "ufCrm39Community"],  // Updated field name
+                "entityTypeId": PF_LOCATIONS_ENTITY_ID, // Updated entity ID
+                "select": ["id", "ufCrm44Community"], // Updated field name
                 "filter": {
-                    "%ufCrm39Community": query  // Updated field name in filter
+                    "%ufCrm44Community": query // Updated field name in filter
                 }
             };
 
             fetch(webhookUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(data => {
-                resultContainer.innerHTML = '';
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    resultContainer.innerHTML = '';
 
-                if (data.error) {
-                    console.error('Error:', data.error);
-                    resultContainer.innerHTML = '<p>Error fetching data.</p>';
-                    return;
-                }
+                    if (data.error) {
+                        console.error('Error:', data.error);
+                        resultContainer.innerHTML = '<p>Error fetching data.</p>';
+                        return;
+                    }
 
-                const items = data.result.items;
-                if (items.length > 0) {
-                    // Create a Set to store unique communities
-                    const uniqueCommunities = new Set();
-                    const uniqueItems = [];
+                    const items = data.result.items;
+                    if (items.length > 0) {
+                        // Create a Set to store unique communities
+                        const uniqueCommunities = new Set();
+                        const uniqueItems = [];
 
-                    // Filter out duplicates while preserving order
-                    items.forEach(item => {
-                        if (!uniqueCommunities.has(item.ufCrm39Community)) {
-                            uniqueCommunities.add(item.ufCrm39Community);
-                            uniqueItems.push(item);
-                        }
-                    });
-
-                    // Display unique results
-                    uniqueItems.forEach(item => {
-                        const itemElement = document.createElement('li');
-                        itemElement.classList.add('list-group-item');
-                        itemElement.style.cursor = 'pointer';
-                        itemElement.innerHTML = item.ufCrm39Community;
-                        
-                        itemElement.addEventListener('click', function() {
-                            searchInput.value = item.ufCrm39Community;
-                            popup.classList.add('d-none');
-                            resultContainer.innerHTML = '';
+                        // Filter out duplicates while preserving order
+                        items.forEach(item => {
+                            if (!uniqueCommunities.has(item.ufCrm44Community)) {
+                                uniqueCommunities.add(item.ufCrm44Community);
+                                uniqueItems.push(item);
+                            }
                         });
-                        resultContainer.appendChild(itemElement);
-                    });
-                } else {
-                    resultContainer.innerHTML = '<p>No items found.</p>';
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                resultContainer.innerHTML = '<p>Error fetching data.</p>';
-            });
+
+                        // Display unique results
+                        uniqueItems.forEach(item => {
+                            const itemElement = document.createElement('li');
+                            itemElement.classList.add('list-group-item');
+                            itemElement.style.cursor = 'pointer';
+                            itemElement.innerHTML = item.ufCrm44Community;
+
+                            itemElement.addEventListener('click', function() {
+                                searchInput.value = item.ufCrm44Community;
+                                popup.classList.add('d-none');
+                                resultContainer.innerHTML = '';
+                            });
+                            resultContainer.appendChild(itemElement);
+                        });
+                    } else {
+                        resultContainer.innerHTML = '<p>No items found.</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    resultContainer.innerHTML = '<p>Error fetching data.</p>';
+                });
         };
     });
 </script>
