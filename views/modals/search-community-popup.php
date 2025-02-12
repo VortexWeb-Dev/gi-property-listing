@@ -17,78 +17,78 @@
                 popup.classList.remove('d-none');
                 popup.style.top = (searchInput.getBoundingClientRect().top + (window.pageYOffset || document.documentElement.scrollTop) - 170) + 'px';
                 popup.style.left = (searchInput.getBoundingClientRect().left + (window.pageXOffset || document.documentElement.scrollLeft) - 300) + 'px';
-                // make api call
                 searchItems(query);
             } else {
                 popup.classList.add('d-none');
-                resultContainer.innerHTML = ''; // Clear results if the input is too short
+                resultContainer.innerHTML = '';
             }
-        })
+        });
 
-        // Function to fetch items based on search query
         const searchItems = (query) => {
-            // webhookUrl REST API endpoint for Smart Process Automation or custom entity
             const webhookUrl = `${API_BASE_URL}crm.item.list`;
 
             const data = {
-                "entityTypeId": 1084,
-                "select": ["id", "ufCrm22Community"],
+                "entityTypeId": 1092,  // Updated entity ID
+                "select": ["id", "ufCrm39Community"],  // Updated field name
                 "filter": {
-                    "%ufCrm22Community": query
+                    "%ufCrm39Community": query  // Updated field name in filter
                 }
-
             };
 
-            // Make the API request
-            // Fetch data from the Webhook
             fetch(webhookUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json', // Tell the server we are sending JSON
-                        'Accept': 'application/json' // Tell the server we expect JSON back
-                    },
-                    body: JSON.stringify(data) // Convert JavaScript object to JSON string
-                })
-                .then(response => response.json())
-                .then(data => {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                resultContainer.innerHTML = '';
 
-                    // Clear previous results
-                    resultContainer.innerHTML = '';
-
-                    if (data.error) {
-                        console.error('Error:', data.error);
-                        resultContainer.innerHTML = '<p>Error fetching data.</p>';
-                        return;
-                    }
-
-                    // Check if there are any results
-                    const items = data.result.items;
-                    if (items.length > 0) {
-                        // Display results
-                        items.forEach(item => {
-                            const itemElement = document.createElement('li');
-                            itemElement.classList.add('list-group-item');
-                            itemElement.style.cursor = 'pointer';
-                            itemElement.innerHTML = `
-                        $ {
-                            item.ufCrm22Community
-                        }
-                        `;
-                            itemElement.addEventListener('click', function() {
-                                searchInput.value = item.ufCrm22Community;
-                                popup.classList.add('d-none');
-                                resultContainer.innerHTML = ''; // Clear results if the input is too short
-                            });
-                            resultContainer.appendChild(itemElement);
-                        });
-                    } else {
-                        resultContainer.innerHTML = '<p>No items found.</p>';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
+                if (data.error) {
+                    console.error('Error:', data.error);
                     resultContainer.innerHTML = '<p>Error fetching data.</p>';
-                });
+                    return;
+                }
+
+                const items = data.result.items;
+                if (items.length > 0) {
+                    // Create a Set to store unique communities
+                    const uniqueCommunities = new Set();
+                    const uniqueItems = [];
+
+                    // Filter out duplicates while preserving order
+                    items.forEach(item => {
+                        if (!uniqueCommunities.has(item.ufCrm39Community)) {
+                            uniqueCommunities.add(item.ufCrm39Community);
+                            uniqueItems.push(item);
+                        }
+                    });
+
+                    // Display unique results
+                    uniqueItems.forEach(item => {
+                        const itemElement = document.createElement('li');
+                        itemElement.classList.add('list-group-item');
+                        itemElement.style.cursor = 'pointer';
+                        itemElement.innerHTML = item.ufCrm39Community;
+                        
+                        itemElement.addEventListener('click', function() {
+                            searchInput.value = item.ufCrm39Community;
+                            popup.classList.add('d-none');
+                            resultContainer.innerHTML = '';
+                        });
+                        resultContainer.appendChild(itemElement);
+                    });
+                } else {
+                    resultContainer.innerHTML = '<p>No items found.</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                resultContainer.innerHTML = '<p>Error fetching data.</p>';
+            });
         };
     });
 </script>

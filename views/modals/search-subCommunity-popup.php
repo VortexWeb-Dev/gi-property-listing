@@ -17,42 +17,34 @@
                 popup.classList.remove('d-none');
                 popup.style.top = (searchInput.getBoundingClientRect().top + (window.pageYOffset || document.documentElement.scrollTop) - 170) + 'px';
                 popup.style.left = (searchInput.getBoundingClientRect().left + (window.pageXOffset || document.documentElement.scrollLeft) - 300) + 'px';
-                // make api call
                 searchItems(query);
             } else {
                 popup.classList.add('d-none');
-                resultContainer.innerHTML = ''; // Clear results if the input is too short
+                resultContainer.innerHTML = '';
             }
-        })
+        });
 
-        // Function to fetch items based on search query
         const searchItems = (query) => {
-            // webhookUrl REST API endpoint for Smart Process Automation or custom entity
             const webhookUrl = `${API_BASE_URL}crm.item.list`;
 
             const data = {
-                "entityTypeId": 1088,
-                "select": ["id", "ufCrm23SubCommunity"],
+                "entityTypeId": 1092, // Updated entity ID
+                "select": ["id", "ufCrm39SubCommunity"], // Updated field name
                 "filter": {
-                    "%ufCrm23SubCommunity": query
+                    "%ufCrm39SubCommunity": query // Updated field name in filter
                 }
-
             };
 
-            // Make the API request
-            // Fetch data from the Webhook
             fetch(webhookUrl, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json', // Tell the server we are sending JSON
-                        'Accept': 'application/json' // Tell the server we expect JSON back
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
                     },
-                    body: JSON.stringify(data) // Convert JavaScript object to JSON string
+                    body: JSON.stringify(data)
                 })
                 .then(response => response.json())
                 .then(data => {
-
-                    // Clear previous results
                     resultContainer.innerHTML = '';
 
                     if (data.error) {
@@ -61,23 +53,31 @@
                         return;
                     }
 
-                    // Check if there are any results
                     const items = data.result.items;
                     if (items.length > 0) {
-                        // Display results
+                        // Create a Set to store unique sub-communities
+                        const uniqueSubCommunities = new Set();
+                        const uniqueItems = [];
+
+                        // Filter out duplicates while preserving order
                         items.forEach(item => {
+                            if (!uniqueSubCommunities.has(item.ufCrm39SubCommunity)) {
+                                uniqueSubCommunities.add(item.ufCrm39SubCommunity);
+                                uniqueItems.push(item);
+                            }
+                        });
+
+                        // Display unique results
+                        uniqueItems.forEach(item => {
                             const itemElement = document.createElement('li');
                             itemElement.classList.add('list-group-item');
                             itemElement.style.cursor = 'pointer';
-                            itemElement.innerHTML = `
-                        $ {
-                            item.ufCrm23SubCommunity
-                        }
-                        `;
+                            itemElement.innerHTML = item.ufCrm39SubCommunity;
+
                             itemElement.addEventListener('click', function() {
-                                searchInput.value = item.ufCrm23SubCommunity;
+                                searchInput.value = item.ufCrm39SubCommunity;
                                 popup.classList.add('d-none');
-                                resultContainer.innerHTML = ''; // Clear results if the input is too short
+                                resultContainer.innerHTML = '';
                             });
                             resultContainer.appendChild(itemElement);
                         });

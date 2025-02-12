@@ -16,42 +16,34 @@
                 popup.classList.remove('d-none');
                 popup.style.top = (searchInput.getBoundingClientRect().top + (window.pageYOffset || document.documentElement.scrollTop) - 170) + 'px';
                 popup.style.left = (searchInput.getBoundingClientRect().left + (window.pageXOffset || document.documentElement.scrollLeft) - 300) + 'px';
-                // make api call
                 searchItems(query);
             } else {
                 popup.classList.add('d-none');
-                resultContainer.innerHTML = ''; // Clear results if the input is too short
+                resultContainer.innerHTML = '';
             }
-        })
+        });
 
-        // Function to fetch items based on search query
         const searchItems = (query) => {
-            // webhookUrl REST API endpoint for Smart Process Automation or custom entity
             const webhookUrl = `${API_BASE_URL}crm.item.list`;
 
             const data = {
-                "entityTypeId": 1080,
-                "select": ["id", "ufCrm21City"],
+                "entityTypeId": 1092,
+                "select": ["id", "ufCrm39City"],
                 "filter": {
-                    "%ufCrm21City": query
+                    "%ufCrm39City": query
                 }
-
             };
 
-            // Make the API request
-            // Fetch data from the Webhook
             fetch(webhookUrl, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json', // Tell the server we are sending JSON
-                        'Accept': 'application/json' // Tell the server we expect JSON back
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
                     },
-                    body: JSON.stringify(data) // Convert JavaScript object to JSON string
+                    body: JSON.stringify(data)
                 })
                 .then(response => response.json())
                 .then(data => {
-
-                    // Clear previous results
                     resultContainer.innerHTML = '';
 
                     if (data.error) {
@@ -60,23 +52,28 @@
                         return;
                     }
 
-                    // Check if there are any results
                     const items = data.result.items;
                     if (items.length > 0) {
-                        // Display results
+                        const uniqueCities = new Set();
+                        const uniqueItems = [];
+
                         items.forEach(item => {
+                            if (!uniqueCities.has(item.ufCrm39City)) {
+                                uniqueCities.add(item.ufCrm39City);
+                                uniqueItems.push(item);
+                            }
+                        });
+
+                        uniqueItems.forEach(item => {
                             const itemElement = document.createElement('li');
                             itemElement.classList.add('list-group-item');
                             itemElement.style.cursor = 'pointer';
-                            itemElement.innerHTML = `
-                        $ {
-                            item.ufCrm21City
-                        }
-                        `;
+                            itemElement.innerHTML = item.ufCrm39City;
+
                             itemElement.addEventListener('click', function() {
-                                searchInput.value = item.ufCrm21City;
+                                searchInput.value = item.ufCrm39City;
                                 popup.classList.add('d-none');
-                                resultContainer.innerHTML = ''; // Clear results if the input is too short
+                                resultContainer.innerHTML = '';
                             });
                             resultContainer.appendChild(itemElement);
                         });

@@ -10,7 +10,7 @@ if (isset($_GET['page'])) {
 <!-- Topbar -->
 <div class="w-full border-b py-3 px-4 flex justify-between items-center">
     <h1 class="text-2xl font-bold text-gray-800"><a href="?page=properties">Property Listing</a></h1>
-    <div class="text-md">Listings: <span class="ml-2 font-semibold py-1 px-2 bg-blue-600 text-white rounded-lg" id="listingCount">0</span></div>
+    <div class="text-md <?= $page != 'properties' ? 'hidden' : '' ?>">Listings: <span class="ml-2 font-semibold py-1 px-2 bg-blue-600 text-white rounded-lg" id="listingCount">0</span></div>
     <div>
         <!-- Dropdown -->
         <div class="dropdown">

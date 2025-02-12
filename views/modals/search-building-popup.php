@@ -17,67 +17,67 @@
                 popup.classList.remove('d-none');
                 popup.style.top = (searchInput.getBoundingClientRect().top + (window.pageYOffset || document.documentElement.scrollTop) - 170) + 'px';
                 popup.style.left = (searchInput.getBoundingClientRect().left + (window.pageXOffset || document.documentElement.scrollLeft) - 300) + 'px';
-                // make api call
                 searchItems(query);
             } else {
                 popup.classList.add('d-none');
-                resultContainer.innerHTML = ''; // Clear results if the input is too short
+                resultContainer.innerHTML = '';
             }
-        })
+        });
 
-        // Function to fetch items based on search query
         const searchItems = (query) => {
-            // webhookUrl REST API endpoint for Smart Process Automation or custom entity
             const webhookUrl = `${API_BASE_URL}crm.item.list`;
 
             const data = {
-                "entityTypeId": 1092,
-                "select": ["id", "ufCrm24Building"],
+                "entityTypeId": 1092, // Already correct
+                "select": ["id", "ufCrm39Building"], // Updated field name
                 "filter": {
-                    "%ufCrm24Building": query
+                    "%ufCrm39Building": query // Updated field name in filter
                 }
-
             };
 
-            // Make the API request
-            // Fetch data from the Webhook
             fetch(webhookUrl, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json', // Tell the server we are sending JSON
-                        'Accept': 'application/json' // Tell the server we expect JSON back
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
                     },
-                    body: JSON.stringify(data) // Convert JavaScript object to JSON string
+                    body: JSON.stringify(data)
                 })
                 .then(response => response.json())
                 .then(data => {
-
-                    // Clear previous results
                     resultContainer.innerHTML = '';
 
                     if (data.error) {
-                        console.error('Error:', data.error);
+                        console.error('Error:', error);
                         resultContainer.innerHTML = '<p>Error fetching data.</p>';
                         return;
                     }
 
-                    // Check if there are any results
                     const items = data.result.items;
                     if (items.length > 0) {
-                        // Display results
+                        // Create a Set to store unique buildings
+                        const uniqueBuildings = new Set();
+                        const uniqueItems = [];
+
+                        // Filter out duplicates while preserving order
                         items.forEach(item => {
+                            if (!uniqueBuildings.has(item.ufCrm39Building)) {
+                                uniqueBuildings.add(item.ufCrm39Building);
+                                uniqueItems.push(item);
+                            }
+                        });
+
+                        // Display unique results
+                        uniqueItems.forEach(item => {
                             const itemElement = document.createElement('li');
                             itemElement.classList.add('list-group-item');
                             itemElement.style.cursor = 'pointer';
-                            itemElement.innerHTML = `
-                        $ {
-                            item.ufCrm24Building
-                        }
-                        `;
+                            itemElement.innerHTML = item.ufCrm39Building;
+
                             itemElement.addEventListener('click', function() {
-                                searchInput.value = item.ufCrm24Building;
+                                searchInput.value = item.ufCrm39Building;
                                 popup.classList.add('d-none');
-                                resultContainer.innerHTML = ''; // Clear results if the input is too short
+                                resultContainer.innerHTML = '';
                             });
                             resultContainer.appendChild(itemElement);
                         });
