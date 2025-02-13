@@ -562,6 +562,43 @@
     // Process base64 images
     async function processBase64Images(base64Images, watermarkPath) {
         const photoPaths = [];
+        const TARGET_ASPECT_RATIO = 4 / 3;
+
+        function resizeToAspectRatio(image) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            let newWidth = image.width;
+            let newHeight = image.height;
+            const currentAspectRatio = image.width / image.height;
+
+            if (currentAspectRatio > TARGET_ASPECT_RATIO) {
+                newWidth = image.height * TARGET_ASPECT_RATIO;
+                newHeight = image.height;
+            } else if (currentAspectRatio < TARGET_ASPECT_RATIO) {
+                newWidth = image.width;
+                newHeight = image.width / TARGET_ASPECT_RATIO;
+            }
+
+            canvas.width = newWidth;
+            canvas.height = newHeight;
+
+            const xOffset = (newWidth - image.width) / 2;
+            const yOffset = (newHeight - image.height) / 2;
+
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, newWidth, newHeight);
+
+            ctx.drawImage(
+                image,
+                xOffset,
+                yOffset,
+                image.width,
+                image.height
+            );
+
+            return canvas.toDataURL();
+        }
 
         for (const base64Image of base64Images) {
             const regex = /^data:image\/(\w+);base64,/;
@@ -582,19 +619,23 @@
                 await new Promise((resolve, reject) => {
                     imageElement.onload = async () => {
                         try {
-                            // Add watermark to the image
-                            const watermarkedDataUrl = await addWatermark(imageElement, watermarkPath);
-                            // const watermarkedDataUrl = await addWatermarkText(imageElement, 'LIVRICHY');
-                            // const watermarkedDataUrl = await addWatermarkWithFabric(imageElement, watermarkPath);
+                            const resizedDataUrl = resizeToAspectRatio(imageElement);
 
-                            // Convert the data URL to a Blob
+                            const resizedImage = new Image();
+                            resizedImage.src = resizedDataUrl;
+
+                            await new Promise(resolve => {
+                                resizedImage.onload = resolve;
+                            });
+
+                            const watermarkedDataUrl = await addWatermark(resizedImage, watermarkPath);
+
                             const watermarkedBlob = dataURLToBlob(watermarkedDataUrl);
 
-                            // Upload the watermarked Blob
                             const uploadedUrl = await uploadFile(watermarkedBlob);
 
                             if (uploadedUrl) {
-                                photoPaths.push(uploadedUrl); // Add the uploaded URL to the photoPaths array
+                                photoPaths.push(uploadedUrl);
                             } else {
                                 console.error('Error uploading photo from base64 data');
                             }
@@ -604,7 +645,7 @@
                             console.error('Error processing watermarking or uploading:', error);
                             reject(error);
                         } finally {
-                            URL.revokeObjectURL(imageUrl); // Clean up the object URL
+                            URL.revokeObjectURL(imageUrl);
                         }
                     };
 
@@ -622,150 +663,556 @@
     }
 
     function getAmenityName(amenityId) {
-        const amenities = [
-            { id: 'AC', label: 'Central air conditioning' },
-            { id: 'AN', label: 'Cable-ready' },
-            { id: 'AP', label: 'Near airport' },
-            { id: 'BA', label: 'Balcony' },
-            { id: 'BB', label: 'BBQ area' },
-            { id: 'BC', label: 'Beach access' },
-            { id: 'BH', label: 'Beach Access' },
-            { id: 'BK', label: 'Kitchen Appliances' },
-            { id: 'BL', label: 'View of Landmark' },
-            { id: 'BT', label: 'Basement' },
-            { id: 'BP', label: 'Basement parking' },
-            { id: 'BW', label: 'Built in wardrobes' },
-            { id: 'CA', label: 'Carpets' },
-            { id: 'CL', label: 'Cleaning services' },
-            { id: 'CR', label: 'Conference room' },
-            { id: 'CS', label: 'Concierge Service' },
-            { id: 'CV', label: 'Community view' },
-            { id: 'DN', label: 'Pantry' },
-            { id: 'DR', label: 'Drivers room' },
-            { id: 'EO', label: 'East orientation' },
-            { id: 'FF', label: 'Fully fitted kitchen' },
-            { id: 'GA', label: 'Private garage' },
-            { id: 'GF', label: 'Ground floor' },
-            { id: 'GR', label: 'Garden view' },
-            { id: 'GZ', label: 'Gazebo' },
-            { id: 'HO', label: 'Near hospital' },
-            { id: 'HT', label: 'Heating' },
-            { id: 'IC', label: 'Within a Compound' },
-            { id: 'IS', label: 'Indoor swimming pool' },
-            { id: 'LF', label: 'On low floor' },
-            { id: 'MB', label: 'Marble floors' },
-            { id: 'MF', label: 'On mid floor' },
-            { id: 'MR', label: 'Maids Room' },
-            { id: 'MO', label: 'Near metro' },
-            { id: 'MT', label: 'Maintenance' },
-            { id: 'MS', label: 'Maid Service' },
-            { id: 'NM', label: 'Near mosque' },
-            { id: 'NO', label: 'North orientation' },
-            { id: 'NS', label: 'Near school' },
-            { id: 'PA', label: 'Pets allowed' },
-            { id: 'PG', label: 'Garden' },
-            { id: 'PK', label: 'Public parks' },
-            { id: 'PL', label: 'Private Land' },
-            { id: 'PP', label: 'Swimming pool' },
-            { id: 'PR', label: 'Children Play Area' },
-            { id: 'PY', label: 'Private Gym' },
-            { id: 'RA', label: 'Reception area' },
-            { id: 'RT', label: 'Near restaurants' },
-            { id: 'SA', label: 'Sauna' },
-            { id: 'SG', label: 'Storage room' },
-            { id: 'SH', label: 'Core and Shell' },
-            { id: 'SR', label: 'Steam room' },
-            { id: 'SS', label: 'Spa' },
-            { id: 'ST', label: 'Study' },
-            { id: 'SY', label: 'Shared Gym' },
-            { id: 'SP', label: 'Shared swimming pool' },
-            { id: 'SV', label: 'Server room' },
-            { id: 'TR', label: 'Terrace' },
-            { id: 'UI', label: 'Upgraded interior' },
-            { id: 'VF', label: 'Visitor Parking' },
-            { id: 'VW', label: 'Sea/Water view' },
-            { id: 'WC', label: 'Walk-in Closet' },
-            { id: 'WO', label: 'West orientation' },
-            { id: 'VP', label: 'Visitors parking' },
-            { id: 'VT', label: 'Near veterinary' },
-            { id: 'VW', label: 'View of Water' },
-            { id: "SE", label: "Security" },
-            { id: "CO", label: "Children's Pool" },
+        const amenities = [{
+                id: 'AC',
+                label: 'Central air conditioning'
+            },
+            {
+                id: 'AN',
+                label: 'Cable-ready'
+            },
+            {
+                id: 'AP',
+                label: 'Near airport'
+            },
+            {
+                id: 'BA',
+                label: 'Balcony'
+            },
+            {
+                id: 'BB',
+                label: 'BBQ area'
+            },
+            {
+                id: 'BC',
+                label: 'Beach access'
+            },
+            {
+                id: 'BH',
+                label: 'Beach Access'
+            },
+            {
+                id: 'BK',
+                label: 'Kitchen Appliances'
+            },
+            {
+                id: 'BL',
+                label: 'View of Landmark'
+            },
+            {
+                id: 'BT',
+                label: 'Basement'
+            },
+            {
+                id: 'BP',
+                label: 'Basement parking'
+            },
+            {
+                id: 'BW',
+                label: 'Built in wardrobes'
+            },
+            {
+                id: 'CA',
+                label: 'Carpets'
+            },
+            {
+                id: 'CL',
+                label: 'Cleaning services'
+            },
+            {
+                id: 'CR',
+                label: 'Conference room'
+            },
+            {
+                id: 'CS',
+                label: 'Concierge Service'
+            },
+            {
+                id: 'CV',
+                label: 'Community view'
+            },
+            {
+                id: 'DN',
+                label: 'Pantry'
+            },
+            {
+                id: 'DR',
+                label: 'Drivers room'
+            },
+            {
+                id: 'EO',
+                label: 'East orientation'
+            },
+            {
+                id: 'FF',
+                label: 'Fully fitted kitchen'
+            },
+            {
+                id: 'GA',
+                label: 'Private garage'
+            },
+            {
+                id: 'GF',
+                label: 'Ground floor'
+            },
+            {
+                id: 'GR',
+                label: 'Garden view'
+            },
+            {
+                id: 'GZ',
+                label: 'Gazebo'
+            },
+            {
+                id: 'HO',
+                label: 'Near hospital'
+            },
+            {
+                id: 'HT',
+                label: 'Heating'
+            },
+            {
+                id: 'IC',
+                label: 'Within a Compound'
+            },
+            {
+                id: 'IS',
+                label: 'Indoor swimming pool'
+            },
+            {
+                id: 'LF',
+                label: 'On low floor'
+            },
+            {
+                id: 'MB',
+                label: 'Marble floors'
+            },
+            {
+                id: 'MF',
+                label: 'On mid floor'
+            },
+            {
+                id: 'MR',
+                label: 'Maids Room'
+            },
+            {
+                id: 'MO',
+                label: 'Near metro'
+            },
+            {
+                id: 'MT',
+                label: 'Maintenance'
+            },
+            {
+                id: 'MS',
+                label: 'Maid Service'
+            },
+            {
+                id: 'NM',
+                label: 'Near mosque'
+            },
+            {
+                id: 'NO',
+                label: 'North orientation'
+            },
+            {
+                id: 'NS',
+                label: 'Near school'
+            },
+            {
+                id: 'PA',
+                label: 'Pets allowed'
+            },
+            {
+                id: 'PG',
+                label: 'Garden'
+            },
+            {
+                id: 'PK',
+                label: 'Public parks'
+            },
+            {
+                id: 'PL',
+                label: 'Private Land'
+            },
+            {
+                id: 'PP',
+                label: 'Swimming pool'
+            },
+            {
+                id: 'PR',
+                label: 'Children Play Area'
+            },
+            {
+                id: 'PY',
+                label: 'Private Gym'
+            },
+            {
+                id: 'RA',
+                label: 'Reception area'
+            },
+            {
+                id: 'RT',
+                label: 'Near restaurants'
+            },
+            {
+                id: 'SA',
+                label: 'Sauna'
+            },
+            {
+                id: 'SG',
+                label: 'Storage room'
+            },
+            {
+                id: 'SH',
+                label: 'Core and Shell'
+            },
+            {
+                id: 'SR',
+                label: 'Steam room'
+            },
+            {
+                id: 'SS',
+                label: 'Spa'
+            },
+            {
+                id: 'ST',
+                label: 'Study'
+            },
+            {
+                id: 'SY',
+                label: 'Shared Gym'
+            },
+            {
+                id: 'SP',
+                label: 'Shared swimming pool'
+            },
+            {
+                id: 'SV',
+                label: 'Server room'
+            },
+            {
+                id: 'TR',
+                label: 'Terrace'
+            },
+            {
+                id: 'UI',
+                label: 'Upgraded interior'
+            },
+            {
+                id: 'VF',
+                label: 'Visitor Parking'
+            },
+            {
+                id: 'VW',
+                label: 'Sea/Water view'
+            },
+            {
+                id: 'WC',
+                label: 'Walk-in Closet'
+            },
+            {
+                id: 'WO',
+                label: 'West orientation'
+            },
+            {
+                id: 'VP',
+                label: 'Visitors parking'
+            },
+            {
+                id: 'VT',
+                label: 'Near veterinary'
+            },
+            {
+                id: 'VW',
+                label: 'View of Water'
+            },
+            {
+                id: "SE",
+                label: "Security"
+            },
+            {
+                id: "CO",
+                label: "Children's Pool"
+            },
         ];
 
         return amenities.find(amenity => amenity.id === amenityId)?.label || amenityId;
     }
 
     function getAmenityId(amenityName) {
-        const amenities = [
-            { id: 'AC', label: 'Central air conditioning' },
-            { id: 'AN', label: 'Cable-ready' },
-            { id: 'AP', label: 'Near airport' },
-            { id: 'BA', label: 'Balcony' },
-            { id: 'BB', label: 'BBQ area' },
-            { id: 'BC', label: 'Beach access' },
-            { id: 'BH', label: 'Beach Access' },
-            { id: 'BK', label: 'Kitchen Appliances' },
-            { id: 'BL', label: 'View of Landmark' },
-            { id: 'BT', label: 'Basement' },
-            { id: 'BP', label: 'Basement parking' },
-            { id: 'BW', label: 'Built in wardrobes' },
-            { id: 'CA', label: 'Carpets' },
-            { id: 'CL', label: 'Cleaning services' },
-            { id: 'CR', label: 'Conference room' },
-            { id: 'CS', label: 'Concierge Service' },
-            { id: 'CV', label: 'Community view' },
-            { id: 'DN', label: 'Pantry' },
-            { id: 'DR', label: 'Drivers room' },
-            { id: 'EO', label: 'East orientation' },
-            { id: 'FF', label: 'Fully fitted kitchen' },
-            { id: 'GA', label: 'Private garage' },
-            { id: 'GF', label: 'Ground floor' },
-            { id: 'GR', label: 'Garden view' },
-            { id: 'GZ', label: 'Gazebo' },
-            { id: 'HO', label: 'Near hospital' },
-            { id: 'HT', label: 'Heating' },
-            { id: 'IC', label: 'Within a Compound' },
-            { id: 'IS', label: 'Indoor swimming pool' },
-            { id: 'LF', label: 'On low floor' },
-            { id: 'MB', label: 'Marble floors' },
-            { id: 'MF', label: 'On mid floor' },
-            { id: 'MR', label: 'Maids Room' },
-            { id: 'MO', label: 'Near metro' },
-            { id: 'MT', label: 'Maintenance' },
-            { id: 'MS', label: 'Maid Service' },
-            { id: 'NM', label: 'Near mosque' },
-            { id: 'NO', label: 'North orientation' },
-            { id: 'NS', label: 'Near school' },
-            { id: 'PA', label: 'Pets allowed' },
-            { id: 'PG', label: 'Garden' },
-            { id: 'PK', label: 'Public parks' },
-            { id: 'PL', label: 'Private Land' },
-            { id: 'PP', label: 'Swimming pool' },
-            { id: 'PR', label: 'Children Play Area' },
-            { id: 'PY', label: 'Private Gym' },
-            { id: 'RA', label: 'Reception area' },
-            { id: 'RT', label: 'Near restaurants' },
-            { id: 'SA', label: 'Sauna' },
-            { id: 'SG', label: 'Storage room' },
-            { id: 'SH', label: 'Core and Shell' },
-            { id: 'SR', label: 'Steam room' },
-            { id: 'SS', label: 'Spa' },
-            { id: 'ST', label: 'Study' },
-            { id: 'SY', label: 'Shared Gym' },
-            { id: 'SP', label: 'Shared swimming pool' },
-            { id: 'SV', label: 'Server room' },
-            { id: 'TR', label: 'Terrace' },
-            { id: 'UI', label: 'Upgraded interior' },
-            { id: 'VF', label: 'Visitor Parking' },
-            { id: 'VW', label: 'Sea/Water view' },
-            { id: 'WC', label: 'Walk-in Closet' },
-            { id: 'WO', label: 'West orientation' },
-            { id: 'VP', label: 'Visitors parking' },
-            { id: 'VT', label: 'Near veterinary' },
-            { id: 'VW', label: 'View of Water' },
-            { id: "SE", label: "Security" },
-            { id: "CO", label: "Children's Pool" },
+        const amenities = [{
+                id: 'AC',
+                label: 'Central air conditioning'
+            },
+            {
+                id: 'AN',
+                label: 'Cable-ready'
+            },
+            {
+                id: 'AP',
+                label: 'Near airport'
+            },
+            {
+                id: 'BA',
+                label: 'Balcony'
+            },
+            {
+                id: 'BB',
+                label: 'BBQ area'
+            },
+            {
+                id: 'BC',
+                label: 'Beach access'
+            },
+            {
+                id: 'BH',
+                label: 'Beach Access'
+            },
+            {
+                id: 'BK',
+                label: 'Kitchen Appliances'
+            },
+            {
+                id: 'BL',
+                label: 'View of Landmark'
+            },
+            {
+                id: 'BT',
+                label: 'Basement'
+            },
+            {
+                id: 'BP',
+                label: 'Basement parking'
+            },
+            {
+                id: 'BW',
+                label: 'Built in wardrobes'
+            },
+            {
+                id: 'CA',
+                label: 'Carpets'
+            },
+            {
+                id: 'CL',
+                label: 'Cleaning services'
+            },
+            {
+                id: 'CR',
+                label: 'Conference room'
+            },
+            {
+                id: 'CS',
+                label: 'Concierge Service'
+            },
+            {
+                id: 'CV',
+                label: 'Community view'
+            },
+            {
+                id: 'DN',
+                label: 'Pantry'
+            },
+            {
+                id: 'DR',
+                label: 'Drivers room'
+            },
+            {
+                id: 'EO',
+                label: 'East orientation'
+            },
+            {
+                id: 'FF',
+                label: 'Fully fitted kitchen'
+            },
+            {
+                id: 'GA',
+                label: 'Private garage'
+            },
+            {
+                id: 'GF',
+                label: 'Ground floor'
+            },
+            {
+                id: 'GR',
+                label: 'Garden view'
+            },
+            {
+                id: 'GZ',
+                label: 'Gazebo'
+            },
+            {
+                id: 'HO',
+                label: 'Near hospital'
+            },
+            {
+                id: 'HT',
+                label: 'Heating'
+            },
+            {
+                id: 'IC',
+                label: 'Within a Compound'
+            },
+            {
+                id: 'IS',
+                label: 'Indoor swimming pool'
+            },
+            {
+                id: 'LF',
+                label: 'On low floor'
+            },
+            {
+                id: 'MB',
+                label: 'Marble floors'
+            },
+            {
+                id: 'MF',
+                label: 'On mid floor'
+            },
+            {
+                id: 'MR',
+                label: 'Maids Room'
+            },
+            {
+                id: 'MO',
+                label: 'Near metro'
+            },
+            {
+                id: 'MT',
+                label: 'Maintenance'
+            },
+            {
+                id: 'MS',
+                label: 'Maid Service'
+            },
+            {
+                id: 'NM',
+                label: 'Near mosque'
+            },
+            {
+                id: 'NO',
+                label: 'North orientation'
+            },
+            {
+                id: 'NS',
+                label: 'Near school'
+            },
+            {
+                id: 'PA',
+                label: 'Pets allowed'
+            },
+            {
+                id: 'PG',
+                label: 'Garden'
+            },
+            {
+                id: 'PK',
+                label: 'Public parks'
+            },
+            {
+                id: 'PL',
+                label: 'Private Land'
+            },
+            {
+                id: 'PP',
+                label: 'Swimming pool'
+            },
+            {
+                id: 'PR',
+                label: 'Children Play Area'
+            },
+            {
+                id: 'PY',
+                label: 'Private Gym'
+            },
+            {
+                id: 'RA',
+                label: 'Reception area'
+            },
+            {
+                id: 'RT',
+                label: 'Near restaurants'
+            },
+            {
+                id: 'SA',
+                label: 'Sauna'
+            },
+            {
+                id: 'SG',
+                label: 'Storage room'
+            },
+            {
+                id: 'SH',
+                label: 'Core and Shell'
+            },
+            {
+                id: 'SR',
+                label: 'Steam room'
+            },
+            {
+                id: 'SS',
+                label: 'Spa'
+            },
+            {
+                id: 'ST',
+                label: 'Study'
+            },
+            {
+                id: 'SY',
+                label: 'Shared Gym'
+            },
+            {
+                id: 'SP',
+                label: 'Shared swimming pool'
+            },
+            {
+                id: 'SV',
+                label: 'Server room'
+            },
+            {
+                id: 'TR',
+                label: 'Terrace'
+            },
+            {
+                id: 'UI',
+                label: 'Upgraded interior'
+            },
+            {
+                id: 'VF',
+                label: 'Visitor Parking'
+            },
+            {
+                id: 'VW',
+                label: 'Sea/Water view'
+            },
+            {
+                id: 'WC',
+                label: 'Walk-in Closet'
+            },
+            {
+                id: 'WO',
+                label: 'West orientation'
+            },
+            {
+                id: 'VP',
+                label: 'Visitors parking'
+            },
+            {
+                id: 'VT',
+                label: 'Near veterinary'
+            },
+            {
+                id: 'VW',
+                label: 'View of Water'
+            },
+            {
+                id: "SE",
+                label: "Security"
+            },
+            {
+                id: "CO",
+                label: "Children's Pool"
+            },
         ];
 
         return amenities.find(amenity => amenity.label === amenityName)?.id || amenityName;
