@@ -89,12 +89,13 @@
 
                 
                 let owners = [];
-                const ownersResponse = await fetch(`${baseUrl}/user.get?select[0]=NAME&select[1]=LAST_NAME&order[NAME]=asc`);
+                const ownersResponse = await fetch(`${baseUrl}/user.get?select[0]=NAME&select[1]=LAST_NAME&order[NAME]=asc&filter[ACTIVE]=true`);
                 const ownersData = await ownersResponse.json();
                 const totalOwners = ownersData.total;
+                console.log("totalOwners", totalOwners);
 
                 for (let i = 0; i < Math.ceil(totalOwners / 50); i++) {
-                    const ownersResponse = await fetch(`${baseUrl}/user.get?select[0]=NAME&select[1]=LAST_NAME&order[NAME]=asc&start=${i * 50}`);
+                    const ownersResponse = await fetch(`${baseUrl}/user.get?select[0]=NAME&select[1]=LAST_NAME&order[NAME]=asc&filter[ACTIVE]=true&start=${i * 50}`);
                     const ownersData = await ownersResponse.json();
                     owners = owners.concat(ownersData.result.map(owner => {
                         return {
