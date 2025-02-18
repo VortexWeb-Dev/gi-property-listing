@@ -56,7 +56,8 @@ $fields = [
     'ufCrm37WebsiteEnable',
     'updatedTime',
     'ufCrm37TitleDeed',
-    'ufCrm37Amenities'
+    'ufCrm37Amenities',
+    'ufCrm37Watermark',
 ];
 
 $properties = fetchAllProperties($baseUrl, $entityTypeId, $fields, 'pf');

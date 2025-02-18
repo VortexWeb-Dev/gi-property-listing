@@ -305,7 +305,7 @@ function formatAgent($property)
     return $xml;
 }
 
-function formatPhotos($photos)
+function formatPhotos($photos, $watermark = true)
 {
     if (empty($photos)) {
         return '';
@@ -313,7 +313,7 @@ function formatPhotos($photos)
 
     $xml = '<photo>';
     foreach ($photos as $photo) {
-        $xml .= '<url last_update="' . date('Y-m-d H:i:s') . '" watermark="Yes">' . htmlspecialchars($photo) . '</url>';
+        $xml .= '<url last_update="' . date('Y-m-d H:i:s') . '" watermark="' . ($watermark ? 'Yes' : 'No') . '">' . htmlspecialchars($photo) . '</url>';
     }
     $xml .= '</photo>';
 
@@ -369,13 +369,45 @@ function formatCompletionStatus($property)
 function formatAmenities($property)
 {
     $private_amenities_ids = [
-        'AC', 'BA', 'BK', 'BL', 'BW', 'CP', 'CS', 'LB', 'MR', 'MS',
-        'PA', 'PG', 'PJ', 'PP', 'PY', 'VC', 'SE', 'SP', 'SS', 'ST',
-        'SY', 'VW', 'WC', 'CO', 'PR', 'BR'
+        'AC',
+        'BA',
+        'BK',
+        'BL',
+        'BW',
+        'CP',
+        'CS',
+        'LB',
+        'MR',
+        'MS',
+        'PA',
+        'PG',
+        'PJ',
+        'PP',
+        'PY',
+        'VC',
+        'SE',
+        'SP',
+        'SS',
+        'ST',
+        'SY',
+        'VW',
+        'WC',
+        'CO',
+        'PR',
+        'BR'
     ];
 
     $commercial_amenities_ids = [
-        'CR', 'AN', 'DN', 'LB', 'SP', 'SY', 'CP', 'VC', 'PN', 'MZ'
+        'CR',
+        'AN',
+        'DN',
+        'LB',
+        'SP',
+        'SY',
+        'CP',
+        'VC',
+        'PN',
+        'MZ'
     ];
 
     $amenities = $property['ufCrm37Amenities'] ?? [];
@@ -441,7 +473,10 @@ function generatePfXml($properties)
         $xml .= formatField('parking', $property['ufCrm37Parking']);
         $xml .= formatFurnished($property);
         $xml .= formatField('view360', $property['ufCrm_37_360_VIEW_URL']);
-        $xml .= formatPhotos($property['ufCrm37PhotoLinks']);
+
+        $watermark = ($property['ufCrm37Watermark'] === 'Y' || $property['ufCrm37Watermark'] === null) ? 'Y' : 'N';
+        $xml .= formatPhotos($property['ufCrm37PhotoLinks'], $watermark === 'Y');
+        
         $xml .= formatField('floor_plan', $property['ufCrm37FloorPlan']);
         $xml .= formatGeopoints($property);
         $xml .= formatField('availability_date', $property['ufCrm37AvailableFrom'], 'date');
