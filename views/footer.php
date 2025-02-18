@@ -560,7 +560,7 @@
     }
 
     // Process base64 images
-    async function processBase64Images(base64Images, watermarkPath) {
+    async function processBase64Images(base64Images, watermarkPath, watermark = true) {
         const photoPaths = [];
         const TARGET_ASPECT_RATIO = 4 / 3;
 
@@ -620,7 +620,6 @@
                     imageElement.onload = async () => {
                         try {
                             const resizedDataUrl = resizeToAspectRatio(imageElement);
-
                             const resizedImage = new Image();
                             resizedImage.src = resizedDataUrl;
 
@@ -628,11 +627,12 @@
                                 resizedImage.onload = resolve;
                             });
 
-                            const watermarkedDataUrl = await addWatermark(resizedImage, watermarkPath);
+                            const finalDataUrl = watermark ?
+                                await addWatermark(resizedImage, watermarkPath) :
+                                resizedDataUrl;
 
-                            const watermarkedBlob = dataURLToBlob(watermarkedDataUrl);
-
-                            const uploadedUrl = await uploadFile(watermarkedBlob);
+                            const finalBlob = dataURLToBlob(finalDataUrl);
+                            const uploadedUrl = await uploadFile(finalBlob);
 
                             if (uploadedUrl) {
                                 photoPaths.push(uploadedUrl);
@@ -1351,6 +1351,7 @@
             property.ufCrm37BayutEnable == "Y" ? document.getElementById('bayut_enable').checked = true : document.getElementById('bayut_enable').checked = false;
             property.ufCrm37DubizzleEnable == "Y" ? document.getElementById('dubizzle_enable').checked = true : document.getElementById('dubizzle_enable').checked = false;
             property.ufCrm37WebsiteEnable == "Y" ? document.getElementById('website_enable').checked = true : document.getElementById('website_enable').checked = false;
+            property.ufCrm37Watermark == "Y" ? document.getElementById('watermark').checked = true : document.getElementById('watermark').checked = false;
             if (document.getElementById('dubizzle_enable').checked && document.getElementById('bayut_enable').value) {
                 toggle_bayut_dubizzle.checked = true;
             }

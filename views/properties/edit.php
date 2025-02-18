@@ -166,6 +166,7 @@
             "ufCrm37BayutEnable": data.bayut_enable === "on" ? "Y" : "N",
             "ufCrm37DubizzleEnable": data.dubizzle_enable === "on" ? "Y" : "N",
             "ufCrm37WebsiteEnable": data.website_enable === "on" ? "Y" : "N",
+            "ufCrm37Watermark": data.watermark === "on" ? "Y" : "N",
         };
 
         if (agent) {

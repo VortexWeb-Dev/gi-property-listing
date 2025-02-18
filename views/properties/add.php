@@ -159,6 +159,7 @@
             "ufCrm37BayutEnable": data.bayut_enable == "on" ? "Y" : "N",
             "ufCrm37DubizzleEnable": data.dubizzle_enable == "on" ? "Y" : "N",
             "ufCrm37WebsiteEnable": data.website_enable == "on" ? "Y" : "N",
+            "ufCrm37Watermark": data.watermark == "on" ? "Y" : "N",
         };
 
         if (agent) {
@@ -194,7 +195,7 @@
             const fixedPhotos = photos.replace(/\\'/g, '"');
             const photoArray = JSON.parse(fixedPhotos);
             const watermarkPath = 'assets/images/watermark.png?cache=' + Date.now();
-            const uploadedImages = await processBase64Images(photoArray, watermarkPath);
+            const uploadedImages = await processBase64Images(photoArray, watermarkPath, data.watermark === "on");
 
             if (uploadedImages.length > 0) {
                 fields["ufCrm37PhotoLinks"] = uploadedImages;
@@ -207,7 +208,7 @@
             const fixedFloorplan = floorplan.replace(/\\'/g, '"');
             const floorplanArray = JSON.parse(fixedFloorplan);
             const watermarkPath = 'assets/images/watermark.png?cache=' + Date.now();
-            const uploadedFloorplan = await processBase64Images(floorplanArray, watermarkPath);
+            const uploadedFloorplan = await processBase64Images(floorplanArray, watermarkPath, data.watermark === "on");
 
             if (uploadedFloorplan.length > 0) {
                 fields["ufCrm37FloorPlan"] = uploadedFloorplan[0];
