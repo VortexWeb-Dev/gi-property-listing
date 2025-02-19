@@ -564,6 +564,7 @@ function generateWebsiteXml($properties)
         $xml .= formatField('link_city', $property['ufCrm37City']);
         $xml .= formatField('link_district', $property['ufCrm37Community']);
         $xml .= formatField('link_subarea', $property['ufCrm37SubCommunity']);
+        $xml .= formatField('geopoints', $property['ufCrm37Geopoints']);
         $purposeMapping = [
             'RS' => 'Residential Sale',
             'RR' => 'Residential Rent',
