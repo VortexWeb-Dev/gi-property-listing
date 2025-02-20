@@ -16,7 +16,7 @@
                             <option value="">Please select</option>
                             <?php
                             $listing_owners = [];
-                            $owner_result = CRest::call('user.get', ['order' => ['NAME' => 'ASC']]);
+                            $owner_result = CRest::call('user.get', ['order' => ['NAME' => 'ASC'], 'filter' => ['ACTIVE' => 'Y']]);
 
                             $total_owners = $owner_result['total'];
                             $listing_owners = $owner_result['result'];
