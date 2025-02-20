@@ -114,8 +114,8 @@
                             </select>
                         </div>
                         <div>
-                            <label for="developer" class="block text-sm font-medium mb-2">Developer</label>
-                            <select id="developer" name="developer" class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
+                            <label for="listing_owner" class="block text-sm font-medium mb-2">Listing Owner</label>
+                            <select id="listing_owner" name="listing_owner" class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
                                 <option value="">Please select</option>
                             </select>
                         </div>
@@ -164,7 +164,14 @@
                             <input type="number" step="0.01" id="price" name="price" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
                         </div>
                     </div>
-
+                    <div class="grid grid-cols-4 gap-4 mb-6">
+                        <div>
+                            <label for="developer" class="block text-sm font-medium mb-2">Developer</label>
+                            <select id="developer" name="developer" class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
+                                <option value="">Please select</option>
+                            </select>
+                        </div>
+                    </div>
                 </form>
             </div>
 
@@ -248,7 +255,7 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         const listingAgentSelect = document.getElementById('listing_agent');
-        // const listingOwnerSelect = document.getElementById('listing_owner');
+        const listingOwnerSelect = document.getElementById('listing_owner');
         const developerSelect = document.getElementById('developer');
         const baseUrl = API_BASE_URL;
 
@@ -293,13 +300,13 @@
 
         const fetchOwners = async () => {
             try {
-                const response = await fetch(`${baseUrl}/user.get?select[0]=NAME&select[1]=LAST_NAME&order[NAME]=asc`);
+                const response = await fetch(`${baseUrl}/user.get?select[0]=NAME&select[1]=LAST_NAME&order[NAME]=asc&filter[ACTIVE]=true`);
                 const data = await response.json();
                 const totalOwners = data.total;
                 const owners = [];
 
                 for (let i = 0; i < Math.ceil(totalOwners / 50); i++) {
-                    const paginatedResponse = await fetch(`${baseUrl}/user.get?select[0]=NAME&select[1]=LAST_NAME&order[NAME]=asc&start=${i * 50}`);
+                    const paginatedResponse = await fetch(`${baseUrl}/user.get?select[0]=NAME&select[1]=LAST_NAME&order[NAME]=asc&filter[ACTIVE]=true&start=${i * 50}`);
                     const paginatedData = await paginatedResponse.json();
                     owners.push(...paginatedData.result.map(owner => ({
                         NAME: `${owner.NAME} ${owner.LAST_NAME}`.trim()
@@ -327,18 +334,16 @@
         const fetchAndDisplayOptions = async () => {
             try {
 
-                const [agents, developers,
-                    //owners
-                ] = await Promise.all([
+                const [agents, developers, owners] = await Promise.all([
                     fetchAgents(),
                     fetchDevelopers(),
-                    // fetchOwners()
+                    fetchOwners()
                 ]);
 
 
                 createSelectOptions(agents, listingAgentSelect, 'ufCrm38AgentName', 'ufCrm38AgentName');
                 createSelectOptions(developers, developerSelect, 'ufCrm41DeveloperName', 'ufCrm41DeveloperName');
-                // createSelectOptions(owners, listingOwnerSelect, 'NAME', 'NAME');
+                createSelectOptions(owners, listingOwnerSelect, 'NAME', 'NAME');
             } catch (error) {
                 console.error('Error fetching listing data:', error);
             }
