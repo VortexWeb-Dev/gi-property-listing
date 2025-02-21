@@ -21,16 +21,16 @@
                             $total_owners = $owner_result['total'];
                             $listing_owners = $owner_result['result'];
 
-                            // for ($i = 1; $i < ceil($total_owners / 50); $i++) {
-                            //     $owner_response = CRest::call('user.get', ['order' => ['NAME' => 'ASC'], 'start' => $i * 50])['result'];
-                            //     $listing_owners = array_merge($listing_owners, $owner_response);
-                            // }
+                            for ($i = 1; $i < ceil($total_owners / 50); $i++) {
+                                $owner_response = CRest::call('user.get', ['order' => ['NAME' => 'ASC'], 'filter' => ['ACTIVE' => 'Y'], 'start' => $i * 50])['result'];
+                                $listing_owners = array_merge($listing_owners, $owner_response);
+                            }
 
                             if (empty($listing_owners)) {
                                 echo '<option disabled>No owners found</option>';
                             } else {
                                 foreach ($listing_owners as $owner) {
-                                    $name = $owner['NAME'] . ' ' . $owner['LAST_NAME'];
+                                    $name = trim($owner['NAME'] . ' ' . $owner['LAST_NAME']);
                                     echo '<option value="' . $name . '">' . $name . '</option>';
                                 }
                             }
@@ -68,12 +68,7 @@
             console.error('Error:', error);
         }
     }
-
-    async function getOwner(ownerId) {
-        const response = await fetch(`${API_BASE_URL}crm.item.list?entityTypeId=${AGENTS_ENTITY_ID}&filter[ufCrm38OwnerId]=${ownerId}`);
-        return (await response.json()).result.items[0] || null;
-    }
-
+    
     async function handleTransferOwnerSubmit(e) {
         document.getElementById("transferOwnerBtn").disabled = true;
         document.getElementById("transferOwnerBtn").innerHTML = 'Transferring...';
