@@ -743,6 +743,14 @@ function fetchCurrentUser()
     return $response['result'];
 }
 
+function getUser($filter)
+{
+    $response = CRest::call("user.get", [
+        'filter' => $filter
+    ]);
+    return $response['result'][0];
+}
+
 function isAdmin($userId)
 {
     $response = CRestCurrent::call("user.admin");
