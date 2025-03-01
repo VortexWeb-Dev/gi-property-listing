@@ -26,18 +26,50 @@
 
         <!-- Column 1 -->
         <div class="max-w-sm">
-            <label for="landlord_name" class="block text-sm font-medium mb-2">Landlord Name</label>
-            <input type="text" id="landlord_name" name="landlord_name" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
+            <label for="landlord_name" class="block text-sm font-medium mb-2">Landlord Name <span class="text-danger">*</span></label>
+            <input type="text" id="landlord_name" name="landlord_name" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" required>
         </div>
         <!-- Column 2 -->
         <div class="max-w-sm">
-            <label for="landlord_email" class="block text-sm font-medium mb-2">Landlord Email</label>
-            <input type="email" id="landlord_email" name="landlord_email" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
+            <label for="landlord_email" class="block text-sm font-medium mb-2">Landlord Email <span class="text-danger">*</span></label>
+            <input type="email" id="landlord_email" name="landlord_email" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" required>
         </div>
         <!-- Column 1 -->
         <div class="max-w-sm">
-            <label for="landlord_phone" class="block text-sm font-medium mb-2">Landlord Phone</label>
-            <input type="text" id="landlord_phone" name="landlord_phone" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
+            <label for="landlord_phone" class="block text-sm font-medium mb-2">Landlord Phone <span class="text-danger">*</span></label>
+            <input type="text" id="landlord_phone" name="landlord_phone" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" required>
+        </div>
+
+        <!-- Column 1 -->
+        <div class="max-w-sm">
+            <label for="landlord_name2" class="block text-sm font-medium mb-2">Landlord Name 2</label>
+            <input type="text" id="landlord_name2" name="landlord_name2" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
+        </div>
+        <!-- Column 2 -->
+        <div class="max-w-sm">
+            <label for="landlord_email2" class="block text-sm font-medium mb-2">Landlord Email 2</label>
+            <input type="email" id="landlord_email2" name="landlord_email2" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
+        </div>
+        <!-- Column 1 -->
+        <div class="max-w-sm">
+            <label for="landlord_phone2" class="block text-sm font-medium mb-2">Landlord Phone 2</label>
+            <input type="text" id="landlord_phone2" name="landlord_phone2" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
+        </div>
+
+        <!-- Column 1 -->
+        <div class="max-w-sm">
+            <label for="landlord_name3" class="block text-sm font-medium mb-2">Landlord Name 3</label>
+            <input type="text" id="landlord_name3" name="landlord_name3" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
+        </div>
+        <!-- Column 2 -->
+        <div class="max-w-sm">
+            <label for="landlord_email3" class="block text-sm font-medium mb-2">Landlord Email 3</label>
+            <input type="email" id="landlord_email3" name="landlord_email3" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
+        </div>
+        <!-- Column 1 -->
+        <div class="max-w-sm">
+            <label for="landlord_phone3" class="block text-sm font-medium mb-2">Landlord Phone 3</label>
+            <input type="text" id="landlord_phone3" name="landlord_phone3" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
         </div>
 
         <!-- Column 1 -->

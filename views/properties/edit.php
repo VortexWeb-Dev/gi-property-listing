@@ -152,9 +152,19 @@
             "ufCrm37ReraPermitExpirationDate": data.rera_expiration_date,
             "ufCrm37DtcmPermitNumber": data.dtcm_permit_number,
             "ufCrm37ListingOwner": data.listing_owner,
+            // Landlord 1
             "ufCrm37LandlordName": data.landlord_name,
             "ufCrm37LandlordEmail": data.landlord_email,
             "ufCrm37LandlordContact": data.landlord_phone,
+            // Landlord 2
+            "ufCrm_37_LANDLORD_NAME_2": data.landlord_name2,
+            "ufCrm_37_LANDLORD_EMAIL_2": data.landlord_email2,
+            "ufCrm_37_LANDLORD_CONTACT_2": data.landlord_phone2,
+            // Landlord 3
+            "ufCrm_37_LANDLORD_NAME_3": data.landlord_name3,
+            "ufCrm_37_LANDLORD_EMAIL_3": data.landlord_email3,
+            "ufCrm_37_LANDLORD_CONTACT_3": data.landlord_phone3,
+
             "ufCrm37ContractExpiryDate": data.contract_expiry,
             "ufCrm37UnitNo": data.unit_no,
             "ufCrm37SaleType": data.sale_type,
