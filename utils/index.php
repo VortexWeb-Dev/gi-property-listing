@@ -570,6 +570,7 @@ function generateWebsiteXml($properties)
         $xml .= "<full_name>" . htmlspecialchars($property['ufCrm37AgentName'] ?? '') . "</full_name>";
         $xml .= "<email>" . htmlspecialchars($property['ufCrm37AgentEmail'] ?? '') . "</email>";
         $xml .= "<phone>" . htmlspecialchars($property['ufCrm37AgentPhone'] ?? '') . "</phone>";
+        $xml .= "<photo>" . htmlspecialchars($property['ufCrm37AgentPhoto'] ?? '') . "</photo>";
         $xml .= "</link_to_employee>";
 
         $xml .= formatField('permit_number', getPermitNumber($property));
