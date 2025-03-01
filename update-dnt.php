@@ -1,8 +1,8 @@
 <?php
 
-require_once _DIR_ . '/crest/crest.php';
-require_once _DIR_ . '/crest/settings.php';
-require_once _DIR_ . '/utils/index.php';
+require_once __DIR__ . '/crest/crest.php';
+require_once __DIR__ . '/crest/settings.php';
+require_once __DIR__ . '/utils/index.php';
 
 function getLatestProperties()
 {
