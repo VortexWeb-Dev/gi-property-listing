@@ -14,6 +14,16 @@ function buildApiUrl($baseUrl, $entityTypeId, $fields, $start = 0)
     return "$baseUrl/crm.item.list?entityTypeId=$entityTypeId&$selectParams&start=$start&filter[ufCrm37Status]=PUBLISHED";
 }
 
+function buildApiUrlAgents($baseUrl, $entityTypeId, $fields, $start = 0)
+{
+    $selectParams = '';
+    foreach ($fields as $index => $field) {
+        $selectParams .= "select[$index]=$field&";
+    }
+    $selectParams = rtrim($selectParams, '&');
+    return "$baseUrl/crm.item.list?entityTypeId=$entityTypeId&$selectParams&start=$start";
+}
+
 function fetchAllProperties($baseUrl, $entityTypeId, $fields, $platform = null)
 {
     $allProperties = [];
@@ -68,6 +78,37 @@ function fetchAllProperties($baseUrl, $entityTypeId, $fields, $platform = null)
         return $allProperties;
     } catch (Exception $e) {
         error_log('Error fetching properties: ' . $e->getMessage());
+        return [];
+    }
+}
+
+function fetchAllAgents($baseUrl, $entityTypeId, $fields)
+{
+    $allAgents = [];
+    $start = 0;
+
+    try {
+        while (true) {
+            $apiUrl = buildApiUrlAgents($baseUrl, $entityTypeId, $fields, $start);
+            $response = file_get_contents($apiUrl);
+            $data = json_decode($response, true);
+
+            if (isset($data['result']['items'])) {
+                $agents = $data['result']['items'];
+                $allAgents = array_merge($allAgents, $agents);
+            }
+
+            // If there's no "next" key, we've fetched all data
+            if (empty($data['next'])) {
+                break;
+            }
+
+            $start = $data['next'];
+        }
+
+        return $allAgents;
+    } catch (Exception $e) {
+        error_log('Error fetching agents: ' . $e->getMessage());
         return [];
     }
 }
@@ -610,6 +651,27 @@ function generateWebsiteXml($properties)
     }
 
     $xml .= '</list>';
+    return $xml;
+}
+
+function generateAgentsXml($agents)
+{
+    $xml = '<?xml version="1.0" encoding="UTF-8"?>';
+    $xml .= '<agents>';
+
+    foreach ($agents as $agent) {
+        $xml .= '<agent>';
+
+        $xml .= formatField('name', $agent['ufCrm38AgentName']);
+        $xml .= formatField('phone', $agent['ufCrm38AgentMobile']);
+        $xml .= formatField('email', $agent['ufCrm38AgentEmail']);
+        $xml .= formatField('photo', $agent['ufCrm38AgentPhoto']);
+        $xml .= formatField('license', $agent['ufCrm38AgentLicense']);
+       
+        $xml .= '</agent>';
+    }
+
+    $xml .= '</agents>';
     return $xml;
 }
 
