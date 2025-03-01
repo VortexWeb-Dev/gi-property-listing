@@ -1,8 +1,8 @@
 <?php
 
-require_once __DIR__ . '/crest/crest.php';
-require_once __DIR__ . '/crest/settings.php';
-require_once __DIR__ . '/utils/index.php';
+require_once _DIR_ . '/crest/crest.php';
+require_once _DIR_ . '/crest/settings.php';
+require_once _DIR_ . '/utils/index.php';
 
 function getLatestProperties()
 {
@@ -16,7 +16,13 @@ function getLatestProperties()
             'ufCrm37TitleEn',
             'ufCrm37AgentName',
             'ufCrm37PhotoLinks',
-            'ufCrm37ListingOwner'
+            'ufCrm37ListingOwner',
+            'ufCrm37Bedroom',
+            'ufCrm37Bathroom',
+            'ufCrm37Size',
+            'ufCrm37Price',
+            'ufCrm37Location',
+            'ufCrm37PropertyType'
         ],
         'filter' => ['>updatedTime' => $eightMinutesAgo]
     ]);
