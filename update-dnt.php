@@ -16,7 +16,13 @@ function getLatestProperties()
             'ufCrm37TitleEn',
             'ufCrm37AgentName',
             'ufCrm37PhotoLinks',
-            'ufCrm37ListingOwner'
+            'ufCrm37ListingOwner',
+            'ufCrm37Bedroom',
+            'ufCrm37Bathroom',
+            'ufCrm37Size',
+            'ufCrm37Price',
+            'ufCrm37Location',
+            'ufCrm37PropertyType'
         ],
         'filter' => ['>updatedTime' => $eightMinutesAgo]
     ]);
