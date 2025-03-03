@@ -155,7 +155,9 @@ function addToDnt($property)
 
         $ownerPhone = '';
         if ($owner) {
-            $ownerPhone = !empty($owner['PERSONAL_MOBILE']) ? $owner['PERSONAL_MOBILE'] : (!empty($owner['WORK_PHONE']) ? $owner['WORK_PHONE'] : '');
+            $ownerPhone = !empty($owner['PERSONAL_MOBILE'])
+                ? preg_replace('/\D/', '', $owner['PERSONAL_MOBILE'])
+                : (!empty($owner['WORK_PHONE']) ? preg_replace('/\D/', '', $owner['WORK_PHONE']) : '');
         }
 
         $response = CRest::call('crm.item.add', [
