@@ -172,7 +172,7 @@ function addToDnt($property)
                 'ufCrm48Size' => $property['ufCrm37Size'] ?? 0,
                 'ufCrm48Price' => $property['ufCrm37Price'] ?? 0,
                 'ufCrm48LocationPf' => $property['ufCrm37Location'] ?? '',
-                'ufCrm48LocationBayut' => $property['ufCrm37LocationBayut'] ?? '',
+                'ufCrm48LocationBayut' => $property['ufCrm37BayutLocation'] ?? '',
                 'ufCrm48Status' => $newStatus,
                 'ufCrm48UnitType' => getPropertyTypeFromId($property['ufCrm37PropertyType'] ?? ''),
                 'ufCrm48OwnerPhone' => $ownerPhone,
