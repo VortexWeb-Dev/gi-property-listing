@@ -148,6 +148,36 @@ function getPropertyType($property)
     return $property_types[$property['ufCrm37PropertyType']] ?? '';
 }
 
+function getPropertyTypeFromId($typeId)
+{
+    $property_types = array(
+        "AP" => "Apartment",
+        "BW" => "Bungalow",
+        "CD" => "Compound",
+        "DX" => "Duplex",
+        "FF" => "Full floor",
+        "HF" => "Half floor",
+        // "LP" => "Land / Plot",
+        "PH" => "Penthouse",
+        "TH" => "Townhouse",
+        "VH" => "Villa",
+        "WB" => "Whole Building",
+        "HA" => "Short Term / Hotel Apartment",
+        "LC" => "Labor camp",
+        "BU" => "Bulk units",
+        "WH" => "Warehouse",
+        "FA" => "Factory",
+        "OF" => "Office space",
+        "RE" => "Retail",
+        "LP" => "Residential Plot",
+        "SH" => "Shop",
+        "SR" => "Show Room",
+        "SA" => "Staff Accommodation"
+    );
+
+    return $property_types[$typeId] ?? $typeId;
+}
+
 function getPermitNumber($property)
 {
     if (!empty($property['ufCrm37PermitNumber'])) {
