@@ -153,6 +153,7 @@ function addToDnt($property)
             }
         }
 
+        $ownerUrl = "https://gicrm.ae/company/personal/user/ " . $owner['ID'] . "/";
         $ownerPhone = '';
         if ($owner) {
             $ownerPhone = !empty($owner['PERSONAL_MOBILE'])
@@ -178,6 +179,7 @@ function addToDnt($property)
                 'ufCrm48Status' => $newStatus,
                 'ufCrm48UnitType' => getPropertyTypeFromId($property['ufCrm37PropertyType'] ?? ''),
                 'ufCrm48OwnerPhone' => $ownerPhone,
+                'ufCrm48OwnerUrl' => $ownerUrl,
                 'stageId' => ($status === 'PUBLISHED') ? "DT1130_63:NEW" : 'DT1130_63:PREPARATION'
             ]
         ]);
