@@ -85,19 +85,19 @@
         <li class="admin-only">
           <h6 class="dropdown-header">Transfer</h6>
         </li>
-        <li class="admin-only"><button class="dropdown-item px-4 py-2 w-full text-left truncate" type="button" onclick="selectAndAddPropertiesToAgentTransfer()"><i class="fas fa-user-tie me-2"></i>Transfer to Agent</button></li>
-        <li class="admin-only"><button class="dropdown-item px-4 py-2 w-full text-left truncate" type="button" onclick="selectAndAddPropertiesToOwnerTransfer()"><i class="fas fa-user me-2"></i>Transfer to Owner</button></li>
+        <li class="admin-only"><button class="dropdown-item px-4 py-1 w-full text-left truncate" type="button" onclick="selectAndAddPropertiesToAgentTransfer()"><i class="fas fa-user-tie me-2"></i>Transfer to Agent</button></li>
+        <li class="admin-only"><button class="dropdown-item px-4 py-1 w-full text-left truncate" type="button" onclick="selectAndAddPropertiesToOwnerTransfer()"><i class="fas fa-user me-2"></i>Transfer to Owner</button></li>
         <li class="admin-only">
           <hr class="dropdown-divider">
         </li>
         <li class="admin-only">
           <h6 class="dropdown-header">Publish</h6>
         </li>
-        <li class="admin-only"><button class="dropdown-item px-4 py-2 w-full text-left truncate" type="button" onclick="handleBulkAction('publish')"><i class="fas fa-bullhorn me-2"></i>Publish All</button></li>
-        <li class="admin-only"><button class="dropdown-item px-4 py-2 w-full text-left truncate" type="button" onclick="handleBulkAction('publish', 'pf')"><i class="fas fa-search me-2"></i>Publish To PF</button></li>
-        <li class="admin-only"><button class="dropdown-item px-4 py-2 w-full text-left truncate" type="button" onclick="handleBulkAction('publish', 'bayut')"><i class="fas fa-building me-2"></i>Publish To Bayut</button></li>
-        <li class="admin-only"><button class="dropdown-item px-4 py-2 w-full text-left truncate" type="button" onclick="handleBulkAction('publish', 'dubizzle')"><i class="fas fa-home me-2"></i>Publish To Dubizzle</button></li>
-        <li class="admin-only"><button class="dropdown-item px-4 py-2 w-full text-left truncate" type="button" onclick="handleBulkAction('publish', 'website')"><i class="fas fa-globe me-2"></i>Publish To Website</button></li>
+        <li class="admin-only"><button class="dropdown-item px-4 py-1 w-full text-left truncate" type="button" onclick="handleBulkAction('publish')"><i class="fas fa-bullhorn me-2"></i>Publish All</button></li>
+        <li class="admin-only"><button class="dropdown-item px-4 py-1 w-full text-left truncate" type="button" onclick="handleBulkAction('publish', 'pf')"><i class="fas fa-search me-2"></i>Publish To PF</button></li>
+        <li class="admin-only"><button class="dropdown-item px-4 py-1 w-full text-left truncate" type="button" onclick="handleBulkAction('publish', 'bayut')"><i class="fas fa-building me-2"></i>Publish To Bayut</button></li>
+        <li class="admin-only"><button class="dropdown-item px-4 py-1 w-full text-left truncate" type="button" onclick="handleBulkAction('publish', 'dubizzle')"><i class="fas fa-home me-2"></i>Publish To Dubizzle</button></li>
+        <li class="admin-only"><button class="dropdown-item px-4 py-1 w-full text-left truncate" type="button" onclick="handleBulkAction('publish', 'website')"><i class="fas fa-globe me-2"></i>Publish To Website</button></li>
         <li class="admin-only">
           <hr class="dropdown-divider">
         </li>
@@ -105,16 +105,16 @@
         <li class="admin-only">
           <h6 class="dropdown-header">Unpublish</h6>
         </li>
-        <li class="admin-only"><button class="dropdown-item px-4 py-2 w-full text-left truncate" type="button" onclick="handleBulkAction('unpublish')"><i class="fas fa-eye-slash me-2"></i>Unpublish</button></li>
-        <li class="admin-only"><button class="dropdown-item px-4 py-2 w-full text-left truncate" type="button" onclick="handleBulkAction('unpublish', 'pf')"><i class="fas fa-search me-2"></i>Unpublish from PF</button></li>
-        <li class="admin-only"><button class="dropdown-item px-4 py-2 w-full text-left truncate" type="button" onclick="handleBulkAction('unpublish', 'bayut')"><i class="fas fa-building me-2"></i>Unpublish from Bayut</button></li>
-        <li class="admin-only"><button class="dropdown-item px-4 py-2 w-full text-left truncate" type="button" onclick="handleBulkAction('unpublish', 'dubizzle')"><i class="fas fa-home me-2"></i>Unpublish from Dubizzle</button></li>
-        <li class="admin-only"><button class="dropdown-item px-4 py-2 w-full text-left truncate" type="button" onclick="handleBulkAction('unpublish', 'website')"><i class="fas fa-globe me-2"></i>Unpublish from Website</button></li>
+        <li class="admin-only"><button class="dropdown-item px-4 py-1 w-full text-left truncate" type="button" onclick="handleBulkAction('unpublish')"><i class="fas fa-eye-slash me-2"></i>Unpublish</button></li>
+        <li class="admin-only"><button class="dropdown-item px-4 py-1 w-full text-left truncate" type="button" onclick="handleBulkAction('unpublish', 'pf')"><i class="fas fa-search me-2"></i>Unpublish from PF</button></li>
+        <li class="admin-only"><button class="dropdown-item px-4 py-1 w-full text-left truncate" type="button" onclick="handleBulkAction('unpublish', 'bayut')"><i class="fas fa-building me-2"></i>Unpublish from Bayut</button></li>
+        <li class="admin-only"><button class="dropdown-item px-4 py-1 w-full text-left truncate" type="button" onclick="handleBulkAction('unpublish', 'dubizzle')"><i class="fas fa-home me-2"></i>Unpublish from Dubizzle</button></li>
+        <li class="admin-only"><button class="dropdown-item px-4 py-1 w-full text-left truncate" type="button" onclick="handleBulkAction('unpublish', 'website')"><i class="fas fa-globe me-2"></i>Unpublish from Website</button></li>
         <li class="admin-only">
           <hr class="dropdown-divider">
         </li>
-        <li><button class="dropdown-item text-danger px-4 py-2 w-full text-left truncate" type="button" onclick="handleBulkAction('archive')"><i class="fas fa-archive me-2"></i>Archive</button></li>
-        <li><button class="dropdown-item text-danger px-4 py-2 w-full text-left truncate" type="button" onclick="handleBulkAction('delete')"><i class="fas fa-trash-alt me-2"></i>Delete</button></li>
+        <li><button class="dropdown-item text-danger px-4 py-1 w-full text-left truncate" type="button" onclick="handleBulkAction('archive')"><i class="fas fa-archive me-2"></i>Archive</button></li>
+        <li><button class="dropdown-item text-danger px-4 py-1 w-full text-left truncate" type="button" onclick="handleBulkAction('delete')"><i class="fas fa-trash-alt me-2"></i>Delete</button></li>
       </ul>
     </div>
 
