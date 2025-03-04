@@ -4,23 +4,108 @@ require_once __DIR__ . '/crest/crest.php';
 require_once __DIR__ . '/crest/settings.php';
 require_once __DIR__ . '/utils/index.php';
 
+function getAllListingsReferences()
+{
+    try {
+        $allReferences = [];
+        $page = 1;
+        $pageSize = 50;
+
+        do {
+            $response = CRest::call('crm.item.list', [
+                'entityTypeId' => LISTINGS_ENTITY_TYPE_ID,
+                'select' => ['ufCrm37ReferenceNumber'],
+                'start' => ($page - 1) * $pageSize,
+                'limit' => $pageSize
+            ]);
+
+            if (isset($response['error'])) {
+                echo "Error fetching listings references (page {$page}): " . $response['error_description'] . "\n";
+                break;
+            }
+
+            $items = $response['result']['items'] ?? [];
+
+            $pageReferences = array_filter(
+                array_column($items, 'ufCrm37ReferenceNumber'),
+                function ($ref) {
+                    return !empty($ref);
+                }
+            );
+
+            $allReferences = array_merge($allReferences, $pageReferences);
+
+            $morePages = count($items) >= $pageSize;
+            $page++;
+        } while ($morePages);
+
+        echo "Total references fetched: " . count($allReferences) . "\n";
+        return $allReferences;
+    } catch (Exception $e) {
+        echo "Exception in getAllListingsReferences: " . $e->getMessage() . "\n";
+        return [];
+    }
+}
+
 function getAllDntReferences()
 {
     try {
-        $response = CRest::call('crm.item.list', [
-            'entityTypeId' => DNT_ENTITY_TYPE_ID,
-            'select' => ['id', 'ufCrm48ReferenceNumber']
-        ]);
+        $allDntRecords = [];
+        $page = 1;
+        $pageSize = 50;
 
-        if (isset($response['error'])) {
-            echo "Error fetching DNT references: " . $response['error_description'] . "\n";
-            return [];
-        }
+        do {
+            $response = CRest::call('crm.item.list', [
+                'entityTypeId' => DNT_ENTITY_TYPE_ID,
+                'select' => ['id', 'ufCrm48ReferenceNumber'],
+                'start' => ($page - 1) * $pageSize,
+                'limit' => $pageSize
+            ]);
 
-        return $response['result']['items'] ?? [];
+            if (isset($response['error'])) {
+                echo "Error fetching DNT references (page {$page}): " . $response['error_description'] . "\n";
+                break;
+            }
+
+            $items = $response['result']['items'] ?? [];
+
+            $validItems = array_filter($items, function ($item) {
+                return !empty($item['ufCrm48ReferenceNumber']);
+            });
+
+            $allDntRecords = array_merge($allDntRecords, $validItems);
+
+            $morePages = count($items) >= $pageSize;
+            $page++;
+        } while ($morePages);
+
+        echo "Total DNT records fetched: " . count($allDntRecords) . "\n";
+        return $allDntRecords;
     } catch (Exception $e) {
         echo "Exception in getAllDntReferences: " . $e->getMessage() . "\n";
         return [];
+    }
+}
+
+function referenceExistsInListings($referenceNumber)
+{
+    try {
+        $response = CRest::call('crm.item.list', [
+            'entityTypeId' => LISTINGS_ENTITY_TYPE_ID,
+            'select' => ['id'],
+            'filter' => ['ufCrm37ReferenceNumber' => $referenceNumber],
+            'limit' => 1
+        ]);
+
+        if (isset($response['error'])) {
+            echo "Error checking if reference exists: " . $response['error_description'] . "\n";
+            return true;
+        }
+
+        return !empty($response['result']['items']);
+    } catch (Exception $e) {
+        echo "Exception in referenceExistsInListings: " . $e->getMessage() . "\n";
+        return true;
     }
 }
 
@@ -45,7 +130,7 @@ function deleteDntItem($dntId, $referenceNumber)
 function getLatestProperties()
 {
     try {
-        $eightMinutesAgo = date('c', strtotime('-5 minutes'));
+        $fiveMinutesAgo = date('c', strtotime('-5 minutes'));
         $response = CRest::call('crm.item.list', [
             'entityTypeId' => LISTINGS_ENTITY_TYPE_ID,
             'select' => [
@@ -64,7 +149,7 @@ function getLatestProperties()
                 'ufCrm37BayutLocation',
                 'ufCrm37PropertyType'
             ],
-            'filter' => ['>updatedTime' => $eightMinutesAgo]
+            'filter' => ['>updatedTime' => $fiveMinutesAgo]
         ]);
 
         if (isset($response['error'])) {
@@ -241,16 +326,38 @@ try {
     }
 
     $latestProperties = getLatestProperties();
-
-    $latestReferenceNumbers = array_column($latestProperties, 'ufCrm37ReferenceNumber');
+    $latestReferenceNumbers = getAllListingsReferences();
     $allDntRecords = getAllDntReferences();
 
-    foreach ($allDntRecords as $dntRecord) {
-        $dntId = $dntRecord['id'];
-        $dntReferenceNumber = $dntRecord['ufCrm48ReferenceNumber'] ?? '';
+    $totalDntRecords = count($allDntRecords);
+    $potentialDeletions = 0;
 
+    foreach ($allDntRecords as $dntRecord) {
+        $dntReferenceNumber = $dntRecord['ufCrm48ReferenceNumber'] ?? '';
         if (!in_array($dntReferenceNumber, $latestReferenceNumbers)) {
-            deleteDntItem($dntId, $dntReferenceNumber);
+            $potentialDeletions++;
+        }
+    }
+
+    $deletionPercentage = ($totalDntRecords > 0) ? ($potentialDeletions / $totalDntRecords) * 100 : 0;
+
+    if ($deletionPercentage > 10) {
+        echo "WARNING: Script would delete {$potentialDeletions} out of {$totalDntRecords} DNT records ({$deletionPercentage}%).\n";
+        echo "This exceeds the 10% safety threshold. Skipping deletion process.\n";
+    } else {
+        echo "Proceeding with deletion check: {$potentialDeletions} out of {$totalDntRecords} DNT records ({$deletionPercentage}%).\n";
+
+        foreach ($allDntRecords as $dntRecord) {
+            $dntId = $dntRecord['id'];
+            $dntReferenceNumber = $dntRecord['ufCrm48ReferenceNumber'] ?? '';
+
+            if (!in_array($dntReferenceNumber, $latestReferenceNumbers)) {
+                if (!referenceExistsInListings($dntReferenceNumber)) {
+                    deleteDntItem($dntId, $dntReferenceNumber);
+                } else {
+                    echo "Reference {$dntReferenceNumber} still exists in listings but was missed in bulk fetch. Keeping it.\n";
+                }
+            }
         }
     }
 
