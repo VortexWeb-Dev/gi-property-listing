@@ -547,7 +547,7 @@ function generatePfXml($properties)
 
         $watermark = ($property['ufCrm37Watermark'] === 'Y' || $property['ufCrm37Watermark'] === null) ? 'Y' : 'N';
         $xml .= formatPhotos($property['ufCrm37PhotoLinks'], $watermark === 'Y');
-        
+
         $xml .= formatField('floor_plan', $property['ufCrm37FloorPlan']);
         $xml .= formatGeopoints($property);
         $xml .= formatField('availability_date', $property['ufCrm37AvailableFrom'], 'date');
@@ -698,7 +698,7 @@ function generateAgentsXml($agents)
         $xml .= formatField('email', $agent['ufCrm38AgentEmail']);
         $xml .= formatField('photo', $agent['ufCrm38AgentPhoto']);
         $xml .= formatField('license', $agent['ufCrm38AgentLicense']);
-       
+
         $xml .= '</agent>';
     }
 
@@ -846,13 +846,15 @@ function getUser($filter)
 
 function isAdmin($userId)
 {
-    $response = CRestCurrent::call("user.admin");
-
     $admins = [
-        9, // VortexWeb
+        3, // odai@giproperties.ae/ceo@giproperties.ae
+        1593, // alyssa.ashley@giproperties.ae
+        1893, // justine.p@giproperties.ae
+        204, // it@giproperties.ae,
+        1945, // VortexWeb (Aaryan)
     ];
 
-    return true || $response['result'] || in_array($userId, $admins);
+    return in_array((int)$userId, $admins);
 }
 
 
