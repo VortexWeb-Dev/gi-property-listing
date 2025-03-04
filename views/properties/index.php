@@ -160,6 +160,8 @@
                                 <li><a class="dropdown-item" target="_blank" href="download-pdf.php?type=owner&id=${property.id}"><i class="fa-solid fa-print me-2"></i>Download PDF as Listing Owner</a></li>
                                 ${isAdmin ? `
                                 <li><hr class="dropdown-divider"></li>
+                                <li><button class="dropdown-item" onclick="handleAction('export-excel', ${property.id})"><i class="fa-solid fa-file-excel me-2"></i>Export as Excel</button></li>
+                                <li><hr class="dropdown-divider"></li>
                                 <li><button class="dropdown-item" onclick="handleAction('publish', ${property.id})"><i class="fa-solid fa-bullhorn me-2"></i>Publish to all</button></li>
                                 <li><button class="dropdown-item" onclick="handleAction('publish', ${property.id}, 'pf')"><i class="fa-solid fa-search me-2"></i>Publish to PF</button></li>
                                 <li><button class="dropdown-item" onclick="handleAction('publish', ${property.id}, 'bayut')"><i class="fa-solid fa-building me-2"></i>Publish to Bayut</button></li>
