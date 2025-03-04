@@ -128,6 +128,10 @@
                 window.location.href = `download-pdf-agent.php?id=${propertyId}`;
                 reloadRequired = false;
                 break;
+            case 'export-excel':
+                window.location.href = `export-excel.php?id=${propertyId}`;
+                reloadRequired = false;
+                break;
 
             case 'duplicate':
                 try {
