@@ -4,10 +4,48 @@ require_once __DIR__ . '/crest/crest.php';
 require_once __DIR__ . '/crest/settings.php';
 require_once __DIR__ . '/utils/index.php';
 
+function getAllDntReferences()
+{
+    try {
+        $response = CRest::call('crm.item.list', [
+            'entityTypeId' => DNT_ENTITY_TYPE_ID,
+            'select' => ['id', 'ufCrm48ReferenceNumber']
+        ]);
+
+        if (isset($response['error'])) {
+            echo "Error fetching DNT references: " . $response['error_description'] . "\n";
+            return [];
+        }
+
+        return $response['result']['items'] ?? [];
+    } catch (Exception $e) {
+        echo "Exception in getAllDntReferences: " . $e->getMessage() . "\n";
+        return [];
+    }
+}
+
+function deleteDntItem($dntId, $referenceNumber)
+{
+    try {
+        $response = CRest::call('crm.item.delete', [
+            'entityTypeId' => DNT_ENTITY_TYPE_ID,
+            'id' => $dntId
+        ]);
+
+        if (isset($response['error'])) {
+            echo "Error deleting DNT item {$referenceNumber}: " . $response['error_description'] . "\n";
+        } else {
+            echo "Deleted DNT item: {$referenceNumber}\n";
+        }
+    } catch (Exception $e) {
+        echo "Exception in deleteDntItem for {$referenceNumber}: " . $e->getMessage() . "\n";
+    }
+}
+
 function getLatestProperties()
 {
     try {
-        $eightMinutesAgo = date('c', strtotime('-8 minutes'));
+        $eightMinutesAgo = date('c', strtotime('-5 minutes'));
         $response = CRest::call('crm.item.list', [
             'entityTypeId' => LISTINGS_ENTITY_TYPE_ID,
             'select' => [
@@ -203,8 +241,20 @@ try {
     }
 
     $latestProperties = getLatestProperties();
-    echo "Found " . count($latestProperties) . " properties to process\n";
 
+    $latestReferenceNumbers = array_column($latestProperties, 'ufCrm37ReferenceNumber');
+    $allDntRecords = getAllDntReferences();
+
+    foreach ($allDntRecords as $dntRecord) {
+        $dntId = $dntRecord['id'];
+        $dntReferenceNumber = $dntRecord['ufCrm48ReferenceNumber'] ?? '';
+
+        if (!in_array($dntReferenceNumber, $latestReferenceNumbers)) {
+            deleteDntItem($dntId, $dntReferenceNumber);
+        }
+    }
+
+    echo "Found " . count($latestProperties) . " properties to process\n";
     foreach ($latestProperties as $property) {
         addToDnt($property);
 
