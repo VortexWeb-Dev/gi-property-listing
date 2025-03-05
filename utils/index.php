@@ -854,7 +854,7 @@ function isAdmin($userId)
         1945, // VortexWeb (Aaryan)
     ];
 
-    return in_array((int)$userId, $admins);
+    return in_array($userId, $admins);
 }
 
 
