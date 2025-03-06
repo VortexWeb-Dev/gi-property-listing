@@ -2,6 +2,7 @@
 require __DIR__ . '/crest/settings.php';
 require __DIR__ . '/controllers/SpaController.php';
 require __DIR__ . '/utils/index.php';
+require __DIR__ . '/crest/crestcurrent.php'
 ?>
 
 <script>
@@ -18,7 +19,8 @@ require __DIR__ . '/utils/index.php';
 
 include __DIR__ . '/views/header.php';
 
-$currentUser = fetchCurrentUser();
+$currentUserRes = CRestCurrent::call('user.current');
+$currentUser = $currentUserRes['result'];
 $currentUserId = $currentUser['ID'];
 $isAdmin = isAdmin($currentUserId);
 
@@ -54,6 +56,8 @@ if (!array_key_exists($page, $pages)) {
 <script>
     // Store isAdmin in localStorage
     localStorage.setItem('isAdmin', <?php echo json_encode($isAdmin); ?>);
+    localStorage.setItem('currentUserId', <?php echo json_encode($currentUserId); ?>);
+    localStorage.setItem('currentUser', JSON.stringify(<?php echo json_encode($currentUser); ?>));
 </script>
 
 <?php
