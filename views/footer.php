@@ -1,6 +1,7 @@
 <footer class="w-4/5 mx-auto mb-8 px-4 text-center">
     &copy; <?php echo date("Y"); ?> <a href="https://vortexweb.cloud/" target="_blank">VortexWeb</a>
 </footer>
+<a href="current.php" class="opacity-0 text-xs">invisible link</a>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="./node_modules/lodash/lodash.min.js"></script>
