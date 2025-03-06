@@ -37,3 +37,29 @@
 <label class="block text-sm font-medium mb-2">Existing Photos</label>
 <div id="existingPhotoPreviewContainer" class="photoPreviewContainer mb-4">
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropzone = document.querySelector('.dropzone');
+        const fileInput = document.getElementById('photos');
+
+        // Drag-and-drop event listeners
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault(); // Allow drop
+            dropzone.querySelector('div').classList.add('bg-gray-200'); // Visual feedback
+        });
+
+        dropzone.addEventListener('dragleave', () => {
+            dropzone.querySelector('div').classList.remove('bg-gray-200'); // Reset feedback
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.querySelector('div').classList.remove('bg-gray-200');
+            fileInput.files = e.dataTransfer.files; // Assign dropped files to input
+            // Trigger the change event manually if needed
+            const event = new Event('change');
+            fileInput.dispatchEvent(event);
+        });
+    });
+</script>
