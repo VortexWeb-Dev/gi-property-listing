@@ -10,17 +10,11 @@
                         <line x1="12" x2="12" y1="3" y2="15"></line>
                     </svg>
                 </span>
-
                 <div class="mt-4 flex flex-wrap justify-center text-sm leading-6 text-gray-600">
-                    <span class="pe-1 font-medium text-gray-800">
-                        Drop your file here or
-                    </span>
+                    <span class="pe-1 font-medium text-gray-800">Drop your file here or</span>
                     <span class="bg-white font-semibold text-blue-600 hover:text-blue-700 rounded-lg decoration-2 hover:underline focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-600 focus-within:ring-offset-2">browse</span>
                 </div>
-
-                <p class="mt-1 text-xs text-gray-400">
-                    Pick a file up to 10MB.
-                </p>
+                <p class="mt-1 text-xs text-gray-400">Pick a file up to 10MB.</p>
             </div>
         </div>
     </label>
@@ -29,34 +23,25 @@
 <div id="photoPreviewContainer" class="photoPreviewContainer"></div>
 <input type="hidden" id="selectedImages" name="selectedImages" />
 
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        let imageLinks = [];
-        let selectedFiles = [];
+        let imageLinks = []; // Base64 URLs for preview
+        let selectedFiles = []; // File objects for upload
         const previewContainer = document.getElementById('photoPreviewContainer');
         const selectedImagesInput = document.getElementById('selectedImages');
 
         function addSwapy() {
             const swapy = Swapy.createSwapy(previewContainer, {
-                animation: 'dynamic',
-                swapMode: 'drop'
+                animation: 'spring',
+                swapMode: 'hover'
             });
 
-
             swapy.onSwapEnd((event) => {
-                console.log('Swap end event:', event.slotItemMap.asMap);
-
                 imageLinks = [];
-
-                event.slotItemMap.asMap.forEach((item, index) => {
+                event.slotItemMap.asMap.forEach((item) => {
                     let element = document.querySelector(`[data-swapy-item="${item}"]`);
                     imageLinks.push(element.querySelector('img').src);
                 });
-
-
-
-
                 updateSelectedImagesInput();
             });
         }
@@ -64,35 +49,34 @@
         document.getElementById("photos").addEventListener("change", function(event) {
             const files = Array.from(event.target.files);
 
-            // Minimum 8 images
-            if (files.length < 2) {
+            if (files.length < 3) {
                 document.getElementById("photosMessage").classList.remove('hidden');
                 document.getElementById("photosMessage").textContent = `Please select at least 3 images. You have selected ${files.length}.`;
                 return;
             }
+
             selectedFiles = [];
-
-            files.forEach((file) => {
-                if (file.size >= 10 * 1024 * 1024) {
-                    // alert(`The file "${file.name}" is too large (10MB or greater). Please select a smaller file.`);
-                    document.getElementById("photosMessage").classList.remove('hidden');
-                    document.getElementById("photosMessage").textContent = `The file "${file.name}" is too large (10MB or greater). Please select a smaller file.`;
-                } else if (!selectedFiles.some((f) => f.name === file.name)) {
-                    selectedFiles.push(file);
-                    document.getElementById("photosMessage").classList.add('hidden');
-                }
-            });
-
-            // Show loading images message
+            imageLinks = [];
             document.getElementById("photosMessage").classList.remove('hidden');
             document.getElementById("photosMessage").classList.remove('text-red-500');
             document.getElementById("photosMessage").classList.add('text-blue-500');
             document.getElementById("photosMessage").textContent = `Loading images...`;
+
+            files.forEach((file) => {
+                if (file.size >= 10 * 1024 * 1024) {
+                    document.getElementById("photosMessage").classList.remove('hidden');
+                    document.getElementById("photosMessage").classList.add('text-red-500');
+                    document.getElementById("photosMessage").textContent = `The file "${file.name}" is too large (10MB or greater).`;
+                } else if (!selectedFiles.some((f) => f.name === file.name)) {
+                    selectedFiles.push(file);
+                }
+            });
+
             updatePhotoPreview();
         });
 
-
         function updatePhotoPreview() {
+            imageLinks = []; // Reset imageLinks
             const promises = selectedFiles.map((file) => {
                 return new Promise((resolve) => {
                     const reader = new FileReader();
@@ -107,17 +91,14 @@
             Promise.all(promises).then(() => {
                 previewImages(imageLinks);
             });
-
         }
 
         function previewImages(imageLinks) {
-            const numImageLinks = imageLinks.length;
             previewContainer.innerHTML = "";
-
             let row = document.createElement('div');
             row.classList.add('shuffle-row');
 
-            for (let i = 0; i < numImageLinks; i++) {
+            imageLinks.forEach((link, i) => {
                 if (i % 3 === 0 && i !== 0) {
                     previewContainer.appendChild(row);
                     row = document.createElement('div');
@@ -134,44 +115,35 @@
 
                 const image = document.createElement('div');
                 const img = document.createElement('img');
-                img.src = imageLinks[i];
+                img.src = link;
 
                 image.appendChild(img);
                 item.appendChild(image);
                 slot.appendChild(item);
 
                 const removeBtn = document.createElement("button");
-                removeBtn.innerHTML = "&times;";
+                removeBtn.innerHTML = "×";
                 removeBtn.classList.add("position-absolute", "top-0", "end-0", "btn", "btn-sm", "btn-danger", "m-1");
                 removeBtn.style.zIndex = "1";
                 removeBtn.onclick = function() {
-                    selectedFiles.splice(i, 1);
-                    imageLinks.splice(i, 1);
-
-                    previewImages(imageLinks);
-
+                    selectedFiles.splice(i, 1); // Remove corresponding file
+                    imageLinks.splice(i, 1); // Remove corresponding link
+                    previewImages(imageLinks); // Re-render preview
+                    updateSelectedImagesInput();
                 };
 
                 item.appendChild(removeBtn);
-
                 row.appendChild(slot);
-            }
+            });
 
             previewContainer.appendChild(row);
             addSwapy();
-
-            console.log("imageLinks-function", imageLinks);
-            console.log("selectedFiles-function", selectedFiles);
-
-            // Reset message
             document.getElementById("photosMessage").classList.add('hidden');
-
             updateSelectedImagesInput();
         }
 
         function updateSelectedImagesInput() {
             selectedImagesInput.value = JSON.stringify(imageLinks);
-            console.log("selectedImagesInput.value", selectedImagesInput.value);
         }
     });
 </script>
