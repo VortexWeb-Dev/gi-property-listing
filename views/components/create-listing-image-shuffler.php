@@ -29,6 +29,24 @@
         let selectedFiles = []; // File objects for upload
         const previewContainer = document.getElementById('photoPreviewContainer');
         const selectedImagesInput = document.getElementById('selectedImages');
+        const dropzone = document.querySelector('.dropzone');
+
+        // Drag-and-drop event listeners
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault(); // Prevent default to allow drop
+            dropzone.querySelector('div').classList.add('bg-gray-200'); // Visual feedback
+        });
+
+        dropzone.addEventListener('dragleave', () => {
+            dropzone.querySelector('div').classList.remove('bg-gray-200'); // Remove visual feedback
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.querySelector('div').classList.remove('bg-gray-200'); // Reset visual feedback
+            const files = Array.from(e.dataTransfer.files); // Get dropped files
+            handleFiles(files); // Process dropped files
+        });
 
         function addSwapy() {
             const swapy = Swapy.createSwapy(previewContainer, {
@@ -48,7 +66,11 @@
 
         document.getElementById("photos").addEventListener("change", function(event) {
             const files = Array.from(event.target.files);
+            handleFiles(files); // Process selected files
+        });
 
+        // Common function to handle files (from input or drop)
+        function handleFiles(files) {
             if (files.length < 3) {
                 document.getElementById("photosMessage").classList.remove('hidden');
                 document.getElementById("photosMessage").textContent = `Please select at least 3 images. You have selected ${files.length}.`;
@@ -73,7 +95,7 @@
             });
 
             updatePhotoPreview();
-        });
+        }
 
         function updatePhotoPreview() {
             imageLinks = []; // Reset imageLinks
