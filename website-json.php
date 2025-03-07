@@ -3,7 +3,7 @@ require 'utils/index.php';
 require __DIR__ . "/crest/settings.php";
 header('Content-Type: application/json; charset=UTF-8');
 
-$baseUrl = C_REST_WEB_HOOK_URL;
+$baseUrl = WEB_HOOK_URL;
 $entityTypeId = LISTINGS_ENTITY_TYPE_ID;
 $fields = [
     'id',
