@@ -15,7 +15,6 @@
 		<?php
 		require_once (__DIR__.'/crestcurrent.php');
 
-		//$result = CRest::call('user.current');
 		$result = CRestCurrent::call('user.current');
 
 		echo $result['result']['NAME'].' '.$result['result']['LAST_NAME'];

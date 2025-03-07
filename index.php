@@ -71,7 +71,7 @@ if (!array_key_exists($page, $pages)) {
         const storedUserId = localStorage.getItem(userIdKey);
 
         // Check if admin status has expired or if the user ID has changed
-        if (!storedExpiry || now > parseInt(storedExpiry, 10) || storedUserId !== currentUserId) {
+        if (!storedExpiry || now > parseInt(storedExpiry, 10) || storedUserId !== currentUserId && currentUserId) {
             // Update all values
             localStorage.setItem(isAdminKey, currentIsAdmin);
             localStorage.setItem(userIdKey, currentUserId);
