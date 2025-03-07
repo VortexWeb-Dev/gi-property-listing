@@ -59,7 +59,7 @@
     const pageSize = 50;
     let totalPages = 0;
 
-    const isAdmin = <?php echo json_encode($isAdmin); ?>;
+    const isAdmin = localStorage.getItem('isAdmin') == 'true';
 
     async function fetchProperties(page = 1, filters = null) {
         const baseUrl = API_BASE_URL;
