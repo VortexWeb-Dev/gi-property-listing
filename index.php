@@ -55,19 +55,33 @@ if (!array_key_exists($page, $pages)) {
 
 <script>
     (function() {
+        // Constants
         const isAdminKey = 'isAdmin';
+        const userIdKey = 'userId';
         const expiryKey = 'isAdminExpiry';
-        const expiryTime = 30 * 60 * 1000; // 30 minutes in milliseconds
+        const expiryTime = 10 * 60 * 1000; // 30 minutes in milliseconds
         const now = Date.now();
 
-        // Get stored expiry time
-        const storedExpiry = localStorage.getItem(expiryKey);
+        // Current values from server (these would be populated by PHP in your actual implementation)
+        const currentIsAdmin = <?php echo json_encode($isAdmin); ?>; // This will be filled by PHP
+        const currentUserId = <?php echo json_encode($currentUserId); ?>; // This will be filled by PHP
 
-        // Check if isAdmin exists and if it has expired
-        if (!storedExpiry || now > parseInt(storedExpiry, 10)) {
-            // Update isAdmin and expiry time
-            localStorage.setItem(isAdminKey, <?php echo json_encode($isAdmin); ?>);
+        // Get stored values
+        const storedExpiry = localStorage.getItem(expiryKey);
+        const storedUserId = localStorage.getItem(userIdKey);
+
+        // Check if admin status has expired or if the user ID has changed
+        if (!storedExpiry || now > parseInt(storedExpiry, 10) || storedUserId !== currentUserId) {
+            // Update all values
+            localStorage.setItem(isAdminKey, currentIsAdmin);
+            localStorage.setItem(userIdKey, currentUserId);
             localStorage.setItem(expiryKey, now + expiryTime);
+
+            console.log('User session data updated:', {
+                userId: currentUserId,
+                isAdmin: currentIsAdmin,
+                expiresAt: new Date(now + expiryTime).toLocaleTimeString()
+            });
         }
     })();
 </script>
