@@ -54,9 +54,24 @@ if (!array_key_exists($page, $pages)) {
 ?>
 
 <script>
-    // Store isAdmin in localStorage
-    localStorage.setItem('isAdmin', <?php echo json_encode($isAdmin); ?>);
+    (function() {
+        const isAdminKey = 'isAdmin';
+        const expiryKey = 'isAdminExpiry';
+        const expiryTime = 30 * 60 * 1000; // 30 minutes in milliseconds
+        const now = Date.now();
+
+        // Get stored expiry time
+        const storedExpiry = localStorage.getItem(expiryKey);
+
+        // Check if isAdmin exists and if it has expired
+        if (!storedExpiry || now > parseInt(storedExpiry, 10)) {
+            // Update isAdmin and expiry time
+            localStorage.setItem(isAdminKey, <?php echo json_encode($isAdmin); ?>);
+            localStorage.setItem(expiryKey, now + expiryTime);
+        }
+    })();
 </script>
+
 
 <?php
 include __DIR__ . '/views/footer.php';
