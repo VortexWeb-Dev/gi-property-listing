@@ -28,14 +28,12 @@
                 <option value="LC">Labor Camp</option>
                 <option value="LP">Land / Plot</option>
                 <option value="OF">Office Space</option>
-                <option value="OF">Business Centre</option>
                 <option value="RE">Retail</option>
                 <option value="RE">Restaurant</option>
                 <option value="SA">Staff Accommodation</option>
                 <option value="WB">Whole Building</option>
                 <option value="SH">Shop</option>
                 <option value="SR">Show Room</option>
-                <option value="OF">Co-working Space</option>
                 <option value="WH">Storage</option>
                 <option value="WH">Warehouse</option>
                 <option value="LP">Commercial Land</option>
