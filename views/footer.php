@@ -172,8 +172,14 @@
                     }
 
                     addUrl += `&fields[ufCrm37TitleEn]=${encodeURIComponent(property.ufCrm37TitleEn + ' (Duplicate)')}`;
-                    addUrl += `&fields[ufCrm37ReferenceNumber]=${encodeURIComponent(property.ufCrm37ReferenceNumber) + '-duplicate'}`;
                     addUrl += `&fields[ufCrm37Status]=DRAFT`;
+
+                    const timestamp = new Date().getTime().toString();
+                    const first4 = timestamp.slice(0, 4);
+                    const last4 = timestamp.slice(-4);
+                    const newReferenceNumber = 'giproperties-' + first4 + last4;
+
+                    addUrl += `&fields[ufCrm37ReferenceNumber]=${encodeURIComponent(newReferenceNumber)}`;
 
                     await fetch(addUrl, {
                         method: 'GET'
