@@ -1,8 +1,9 @@
 <?php
 
 require_once __DIR__ . '/crest/crest.php';
-require_once __DIR__ . '/crest/settings.php';
 require_once __DIR__ . '/utils/index.php';
+
+define('C_REST_WEB_HOOK_URL', 'https://gicrm.ae/rest/1945/7mnw3te56u363prw/');
 
 function getAllListingsReferences()
 {
