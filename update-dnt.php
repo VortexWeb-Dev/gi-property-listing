@@ -15,7 +15,7 @@ function getAllListingsReferences()
         do {
             $response = CRest::call('crm.item.list', [
                 'entityTypeId' => LISTINGS_ENTITY_TYPE_ID,
-                'select' => ['ufCrm37ReferenceNumber'],
+                'select' => ['ufCrm37ReferenceNumber', 'ufCrm37Status'],
                 'start' => ($page - 1) * $pageSize,
                 'limit' => $pageSize
             ]);
@@ -27,14 +27,7 @@ function getAllListingsReferences()
 
             $items = $response['result']['items'] ?? [];
 
-            $pageReferences = array_filter(
-                array_column($items, 'ufCrm37ReferenceNumber'),
-                function ($ref) {
-                    return !empty($ref);
-                }
-            );
-
-            $allReferences = array_merge($allReferences, $pageReferences);
+            $allReferences = array_merge($allReferences, $items);
 
             $morePages = count($items) >= $pageSize;
             $page++;
@@ -58,7 +51,7 @@ function getAllDntReferences()
         do {
             $response = CRest::call('crm.item.list', [
                 'entityTypeId' => DNT_ENTITY_TYPE_ID,
-                'select' => ['id', 'ufCrm48ReferenceNumber'],
+                'select' => ['id', 'ufCrm48ReferenceNumber', 'ufCrm48Status'],
                 'start' => ($page - 1) * $pageSize,
                 'limit' => $pageSize
             ]);
@@ -331,32 +324,58 @@ try {
     $allDntRecords = getAllDntReferences();
 
     $totalDntRecords = count($allDntRecords);
-    $potentialDeletions = 0;
 
-    foreach ($allDntRecords as $dntRecord) {
-        $dntReferenceNumber = $dntRecord['ufCrm48ReferenceNumber'] ?? '';
-        if (!in_array($dntReferenceNumber, $latestReferenceNumbers)) {
-            $potentialDeletions++;
+    $potentialDeletions = count(array_filter($allDntRecords, function ($dntRecord) use ($latestReferenceNumbers) {
+        $referenceNumber = $dntRecord['ufCrm48ReferenceNumber'] ?? '';
+        $status = $dntRecord['ufCrm48Status'] == 41323 ? 'PUBLISHED' : 'POCKET';
+
+        if (empty($referenceNumber)) return false;
+
+        $matchingRecord = array_values(array_filter($latestReferenceNumbers, function ($item) use ($referenceNumber) {
+            return $item['ufCrm37ReferenceNumber'] === $referenceNumber;
+        }));
+
+        if (empty($matchingRecord)) return true;
+
+        $matched = reset($matchingRecord);
+
+        if(!(isset($matched['ufCrm37Status']) && $matched['ufCrm37Status'] === $status)) {
+            echo "Reference {$referenceNumber} exists in listings with different status. Deleting it.\n";
         }
-    }
+        return !(isset($matched['ufCrm37Status']) && $matched['ufCrm37Status'] === $status);
+    }));
 
-    $deletionPercentage = ($totalDntRecords > 0) ? ($potentialDeletions / $totalDntRecords) * 100 : 0;
+    $deletionPercentage = round(($totalDntRecords > 0) ? ($potentialDeletions / $totalDntRecords) * 100 : 0, 2);
 
-    if ($deletionPercentage > 10) {
+    if ($deletionPercentage > 1) {
         echo "WARNING: Script would delete {$potentialDeletions} out of {$totalDntRecords} DNT records ({$deletionPercentage}%).\n";
-        echo "This exceeds the 10% safety threshold. Skipping deletion process.\n";
+        echo "This exceeds the 1% safety threshold. Skipping deletion process.\n";
     } else {
         echo "Proceeding with deletion check: {$potentialDeletions} out of {$totalDntRecords} DNT records ({$deletionPercentage}%).\n";
 
         foreach ($allDntRecords as $dntRecord) {
             $dntId = $dntRecord['id'];
             $dntReferenceNumber = $dntRecord['ufCrm48ReferenceNumber'] ?? '';
+            $dntStatus = $dntRecord['ufCrm48Status'] == 41323 ? 'PUBLISHED' : 'POCKET';
 
-            if (!in_array($dntReferenceNumber, $latestReferenceNumbers)) {
-                if (!referenceExistsInListings($dntReferenceNumber)) {
+            if (empty($dntReferenceNumber)) {
+                continue;
+            }
+
+            $matchingRecord = array_values(array_filter($latestReferenceNumbers, function ($item) use ($dntReferenceNumber) {
+                return $item['ufCrm37ReferenceNumber'] === $dntReferenceNumber;
+            }));
+
+            if (empty($matchingRecord)) {
+                deleteDntItem($dntId, $dntReferenceNumber);
+            } else {
+                $matched = reset($matchingRecord);
+                $listingStatus = $matched['ufCrm37Status'] ?? '';
+
+                if ($listingStatus !== $dntStatus) {
                     deleteDntItem($dntId, $dntReferenceNumber);
                 } else {
-                    echo "Reference {$dntReferenceNumber} still exists in listings but was missed in bulk fetch. Keeping it.\n";
+                    echo "Reference {$dntReferenceNumber} exists in listings with the same status. Keeping it.\n";
                 }
             }
         }
