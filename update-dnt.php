@@ -5,6 +5,8 @@ require_once __DIR__ . '/utils/index.php';
 
 define('C_REST_WEB_HOOK_URL', 'https://gicrm.ae/rest/1945/7mnw3te56u363prw/');
 
+$bulk_delete = isset($_GET['bulk_delete']) && $_GET['bulk_delete'] === 'true';
+
 function getAllListingsReferences()
 {
     try {
@@ -339,7 +341,7 @@ try {
 
         $matched = reset($matchingRecord);
 
-        if(!(isset($matched['ufCrm37Status']) && $matched['ufCrm37Status'] === $status)) {
+        if (!(isset($matched['ufCrm37Status']) && $matched['ufCrm37Status'] === $status)) {
             echo "Reference {$referenceNumber} exists in listings with different status. Deleting it.\n";
         }
         return !(isset($matched['ufCrm37Status']) && $matched['ufCrm37Status'] === $status);
@@ -347,7 +349,7 @@ try {
 
     $deletionPercentage = round(($totalDntRecords > 0) ? ($potentialDeletions / $totalDntRecords) * 100 : 0, 2);
 
-    if ($deletionPercentage > 1) {
+    if ($deletionPercentage > 1 && !$bulk_delete) {
         echo "WARNING: Script would delete {$potentialDeletions} out of {$totalDntRecords} DNT records ({$deletionPercentage}%).\n";
         echo "This exceeds the 1% safety threshold. Skipping deletion process.\n";
     } else {
