@@ -349,9 +349,9 @@ try {
 
     $deletionPercentage = round(($totalDntRecords > 0) ? ($potentialDeletions / $totalDntRecords) * 100 : 0, 2);
 
-    if ($deletionPercentage > 1 && !$bulk_delete) {
+    if ($deletionPercentage > 10 && !$bulk_delete) {
         echo "WARNING: Script would delete {$potentialDeletions} out of {$totalDntRecords} DNT records ({$deletionPercentage}%).\n";
-        echo "This exceeds the 1% safety threshold. Skipping deletion process.\n";
+        echo "This exceeds the 10% safety threshold. Skipping deletion process.\n";
     } else {
         echo "Proceeding with deletion check: {$potentialDeletions} out of {$totalDntRecords} DNT records ({$deletionPercentage}%).\n";
 
