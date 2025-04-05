@@ -23,7 +23,7 @@ function getAllListingsReferences()
             ]);
 
             if (isset($response['error'])) {
-                echo "Error fetching listings references (page {$page}): " . $response['error_description'] . "\n";
+                echo "Error fetching listings references (page {$page}): " . $response['error_description'] . "</br>";
                 break;
             }
 
@@ -35,10 +35,10 @@ function getAllListingsReferences()
             $page++;
         } while ($morePages);
 
-        echo "Total references fetched: " . count($allReferences) . "\n";
+        echo "Total references fetched: " . count($allReferences) . "</br>";
         return $allReferences;
     } catch (Exception $e) {
-        echo "Exception in getAllListingsReferences: " . $e->getMessage() . "\n";
+        echo "Exception in getAllListingsReferences: " . $e->getMessage() . "</br>";
         return [];
     }
 }
@@ -59,7 +59,7 @@ function getAllDntReferences()
             ]);
 
             if (isset($response['error'])) {
-                echo "Error fetching DNT references (page {$page}): " . $response['error_description'] . "\n";
+                echo "Error fetching DNT references (page {$page}): " . $response['error_description'] . "</br>";
                 break;
             }
 
@@ -75,10 +75,10 @@ function getAllDntReferences()
             $page++;
         } while ($morePages);
 
-        echo "Total DNT records fetched: " . count($allDntRecords) . "\n";
+        echo "Total DNT records fetched: " . count($allDntRecords) . "</br>";
         return $allDntRecords;
     } catch (Exception $e) {
-        echo "Exception in getAllDntReferences: " . $e->getMessage() . "\n";
+        echo "Exception in getAllDntReferences: " . $e->getMessage() . "</br>";
         return [];
     }
 }
@@ -94,13 +94,13 @@ function referenceExistsInListings($referenceNumber)
         ]);
 
         if (isset($response['error'])) {
-            echo "Error checking if reference exists: " . $response['error_description'] . "\n";
+            echo "Error checking if reference exists: " . $response['error_description'] . "</br>";
             return true;
         }
 
         return !empty($response['result']['items']);
     } catch (Exception $e) {
-        echo "Exception in referenceExistsInListings: " . $e->getMessage() . "\n";
+        echo "Exception in referenceExistsInListings: " . $e->getMessage() . "</br>";
         return true;
     }
 }
@@ -114,12 +114,12 @@ function deleteDntItem($dntId, $referenceNumber)
         ]);
 
         if (isset($response['error'])) {
-            echo "Error deleting DNT item {$referenceNumber}: " . $response['error_description'] . "\n";
+            echo "Error deleting DNT item {$referenceNumber}: " . $response['error_description'] . "</br>";
         } else {
-            echo "Deleted DNT item: {$referenceNumber}\n";
+            echo "Deleted DNT item: {$referenceNumber}</br>";
         }
     } catch (Exception $e) {
-        echo "Exception in deleteDntItem for {$referenceNumber}: " . $e->getMessage() . "\n";
+        echo "Exception in deleteDntItem for {$referenceNumber}: " . $e->getMessage() . "</br>";
     }
 }
 
@@ -149,13 +149,13 @@ function getLatestProperties()
         ]);
 
         if (isset($response['error'])) {
-            echo "Error fetching latest properties: " . $response['error_description'] . "\n";
+            echo "Error fetching latest properties: " . $response['error_description'] . "</br>";
             return [];
         }
 
         return $response['result']['items'] ?? [];
     } catch (Exception $e) {
-        echo "Exception in getLatestProperties: " . $e->getMessage() . "\n";
+        echo "Exception in getLatestProperties: " . $e->getMessage() . "</br>";
         return [];
     }
 }
@@ -170,13 +170,13 @@ function getExistingReference($referenceNumber)
         ]);
 
         if (isset($response['error'])) {
-            echo "Error fetching reference: " . $response['error_description'] . "\n";
+            echo "Error fetching reference: " . $response['error_description'] . "</br>";
             return null;
         }
 
         return $response['result']['items'][0] ?? null;
     } catch (Exception $e) {
-        echo "Exception in getExistingReference: " . $e->getMessage() . "\n";
+        echo "Exception in getExistingReference: " . $e->getMessage() . "</br>";
         return null;
     }
 }
@@ -188,7 +188,7 @@ function formatImages($photoLinks)
 
     foreach ($photoLinks as $index => $url) {
         if (!filter_var($url, FILTER_VALIDATE_URL)) {
-            echo "Invalid image URL: {$url}\n";
+            echo "Invalid image URL: {$url}</br>";
             continue;
         }
 
@@ -197,10 +197,10 @@ function formatImages($photoLinks)
             if ($imageData) {
                 $formattedImages[] = ["image_{$index}.jpg", base64_encode($imageData)];
             } else {
-                echo "Failed to fetch image: {$url}\n";
+                echo "Failed to fetch image: {$url}</br>";
             }
         } catch (Exception $e) {
-            echo "Exception fetching image {$url}: " . $e->getMessage() . "\n";
+            echo "Exception fetching image {$url}: " . $e->getMessage() . "</br>";
         }
     }
     return $formattedImages;
@@ -211,13 +211,13 @@ function addToDnt($property)
     try {
         $referenceNumber = $property['ufCrm37ReferenceNumber'] ?? '';
         if (!$referenceNumber) {
-            echo "Missing reference number, skipping property\n";
+            echo "Missing reference number, skipping property</br>";
             return;
         }
 
         $status = $property['ufCrm37Status'] ?? '';
         if (!in_array($status, ['PUBLISHED', 'POCKET'])) {
-            echo "Skipping property with status: {$status}\n";
+            echo "Skipping property with status: {$status}</br>";
             return;
         }
 
@@ -240,11 +240,11 @@ function addToDnt($property)
                 ]);
 
                 if (isset($response['error'])) {
-                    echo "Error updating property: " . $response['error_description'] . "\n";
+                    echo "Error updating property: " . $response['error_description'] . "</br>";
                 } elseif (!empty($response['result'])) {
-                    echo "Updated property status: {$referenceNumber}\n";
+                    echo "Updated property status: {$referenceNumber}</br>";
                 } else {
-                    echo "Failed to update status for: {$referenceNumber}\n";
+                    echo "Failed to update status for: {$referenceNumber}</br>";
                 }
             }
 
@@ -268,7 +268,7 @@ function addToDnt($property)
                     '!ID' => [3, 268]
                 ]);
             } else {
-                echo "Warning: getUser function not available\n";
+                echo "Warning: getUser function not available</br>";
             }
         }
 
@@ -304,20 +304,20 @@ function addToDnt($property)
         ]);
 
         if (isset($response['error'])) {
-            echo "Error adding property: " . $response['error_description'] . "\n";
+            echo "Error adding property: " . $response['error_description'] . "</br>";
         } elseif (!empty($response['result']['item'])) {
-            echo "Property added to DNT: {$referenceNumber}\n";
+            echo "Property added to DNT: {$referenceNumber}</br>";
         } else {
-            echo "Failed to add property: {$referenceNumber}\n";
+            echo "Failed to add property: {$referenceNumber}</br>";
         }
     } catch (Exception $e) {
-        echo "Exception in addToDnt for property " . ($property['ufCrm37ReferenceNumber'] ?? 'unknown') . ": " . $e->getMessage() . "\n";
+        echo "Exception in addToDnt for property " . ($property['ufCrm37ReferenceNumber'] ?? 'unknown') . ": " . $e->getMessage() . "</br>";
     }
 }
 
 try {
     if (!defined('LISTINGS_ENTITY_TYPE_ID') || !defined('DNT_ENTITY_TYPE_ID')) {
-        echo "Error: Required constants are not defined. Check your settings file.\n";
+        echo "Error: Required constants are not defined. Check your settings file.</br>";
         exit(1);
     }
 
@@ -342,7 +342,7 @@ try {
         $matched = reset($matchingRecord);
 
         if (!(isset($matched['ufCrm37Status']) && $matched['ufCrm37Status'] === $status)) {
-            echo "Reference {$referenceNumber} exists in listings with different status. Deleting it.\n";
+            echo "Reference {$referenceNumber} exists in listings with different status. Deleting it.</br>";
         }
         return !(isset($matched['ufCrm37Status']) && $matched['ufCrm37Status'] === $status);
     }));
@@ -350,10 +350,10 @@ try {
     $deletionPercentage = round(($totalDntRecords > 0) ? ($potentialDeletions / $totalDntRecords) * 100 : 0, 2);
 
     if ($deletionPercentage > 10 && !$bulk_delete) {
-        echo "WARNING: Script would delete {$potentialDeletions} out of {$totalDntRecords} DNT records ({$deletionPercentage}%).\n";
-        echo "This exceeds the 10% safety threshold. Skipping deletion process.\n";
+        echo "WARNING: Script would delete {$potentialDeletions} out of {$totalDntRecords} DNT records ({$deletionPercentage}%).</br>";
+        echo "This exceeds the 10% safety threshold. Skipping deletion process.</br>";
     } else {
-        echo "Proceeding with deletion check: {$potentialDeletions} out of {$totalDntRecords} DNT records ({$deletionPercentage}%).\n";
+        echo "Proceeding with deletion check: {$potentialDeletions} out of {$totalDntRecords} DNT records ({$deletionPercentage}%).</br>";
 
         foreach ($allDntRecords as $dntRecord) {
             $dntId = $dntRecord['id'];
@@ -377,21 +377,21 @@ try {
                 if ($listingStatus !== $dntStatus) {
                     deleteDntItem($dntId, $dntReferenceNumber);
                 } else {
-                    echo "Reference {$dntReferenceNumber} exists in listings with the same status. Keeping it.\n";
+                    echo "Reference {$dntReferenceNumber} exists in listings with the same status. Keeping it.</br>";
                 }
             }
         }
     }
 
-    echo "Found " . count($latestProperties) . " properties to process\n";
+    echo "Found " . count($latestProperties) . " properties to process</br>";
     foreach ($latestProperties as $property) {
         addToDnt($property);
 
         usleep(200000);
     }
 
-    echo "Processing completed successfully\n";
+    echo "Processing completed successfully</br>";
 } catch (Exception $e) {
-    echo "Critical error: " . $e->getMessage() . "\n";
+    echo "Critical error: " . $e->getMessage() . "</br>";
     exit(1);
 }
