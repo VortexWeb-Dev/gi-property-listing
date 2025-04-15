@@ -181,6 +181,42 @@ function getExistingReference($referenceNumber)
     }
 }
 
+function getExistingReferenceWithDetails($referenceNumber)
+{
+    try {
+        $response = CRest::call('crm.item.list', [
+            'entityTypeId' => DNT_ENTITY_TYPE_ID,
+            'select' => [
+                'id',
+                'ufCrm48Status',
+                'ufCrm48ListingTitle',
+                'ufCrm48AgentName',
+                'ufCrm48OwnerName',
+                'ufCrm48Bedrooms',
+                'ufCrm48Bathrooms',
+                'ufCrm48Size',
+                'ufCrm48Price',
+                'ufCrm48LocationPf',
+                'ufCrm48LocationBayut',
+                'ufCrm48UnitType',
+                'ufCrm48OwnerPhone',
+                'ufCrm48OwnerUrl'
+            ],
+            'filter' => ['ufCrm48ReferenceNumber' => $referenceNumber]
+        ]);
+
+        if (isset($response['error'])) {
+            echo "Error fetching reference details: " . $response['error_description'] . "</br>";
+            return null;
+        }
+
+        return $response['result']['items'][0] ?? null;
+    } catch (Exception $e) {
+        echo "Exception in getExistingReferenceWithDetails: " . $e->getMessage() . "</br>";
+        return null;
+    }
+}
+
 function formatImages($photoLinks)
 {
     $formattedImages = [];
@@ -221,36 +257,12 @@ function addToDnt($property)
             return;
         }
 
-        $existingItem = getExistingReference($referenceNumber);
+        // Get existing DNT record with all fields
+        $existingItem = getExistingReferenceWithDetails($referenceNumber);
 
         $newStatus = ($status === 'PUBLISHED') ? 41323 : 41324;
 
-        if ($existingItem) {
-            $existingId = $existingItem['id'];
-            $existingStatus = $existingItem['ufCrm48Status'] ?? null;
-
-            if ($existingStatus !== $newStatus) {
-                $response = CRest::call('crm.item.update', [
-                    'entityTypeId' => DNT_ENTITY_TYPE_ID,
-                    'id' => $existingId,
-                    'fields' => [
-                        'ufCrm48Status' => $newStatus,
-                        'stageId' => ($status === 'PUBLISHED') ? "DT1130_63:NEW" : 'DT1130_63:PREPARATION'
-                    ]
-                ]);
-
-                if (isset($response['error'])) {
-                    echo "Error updating property: " . $response['error_description'] . "</br>";
-                } elseif (!empty($response['result'])) {
-                    echo "Updated property status: {$referenceNumber}</br>";
-                } else {
-                    echo "Failed to update status for: {$referenceNumber}</br>";
-                }
-            }
-
-            return;
-        }
-
+        // Prepare all fields that might need updating
         $formattedImages = formatImages($property['ufCrm37PhotoLinks'] ?? []);
 
         $ownerName = $property['ufCrm37ListingOwner'] ?? '';
@@ -272,7 +284,7 @@ function addToDnt($property)
             }
         }
 
-        $ownerUrl = "https://gicrm.ae/company/personal/user/ " . $owner['ID'] . "/";
+        $ownerUrl = "https://gicrm.ae/company/personal/user/" . ($owner['ID'] ?? '') . "/";
         $ownerPhone = '';
         if ($owner) {
             $ownerPhone = !empty($owner['PERSONAL_MOBILE'])
@@ -280,27 +292,89 @@ function addToDnt($property)
                 : (!empty($owner['WORK_PHONE']) ? preg_replace('/\D/', '', $owner['WORK_PHONE']) : '');
         }
 
-        $response = CRest::call('crm.item.add', [
-            'entityTypeId' => DNT_ENTITY_TYPE_ID,
-            'fields' => [
-                'title' => $referenceNumber . ' - ' . $status,
-                'ufCrm48ReferenceNumber' => $referenceNumber,
+        // Prepare updated fields
+        $updatedFields = [
+            'title' => $referenceNumber . ' - ' . $status,
+            'ufCrm48ReferenceNumber' => $referenceNumber,
+            'ufCrm48ListingTitle' => $property['ufCrm37TitleEn'] ?? '',
+            'ufCrm48AgentName' => $property['ufCrm37AgentName'] ?? '',
+            'ufCrm48OwnerName' => $property['ufCrm37ListingOwner'] ?? '',
+            'ufCrm48PropertyImages' => $formattedImages,
+            'ufCrm48Bedrooms' => $property['ufCrm37Bedroom'] ?? 0,
+            'ufCrm48Bathrooms' => $property['ufCrm37Bathroom'] ?? 0,
+            'ufCrm48Size' => $property['ufCrm37Size'] ?? 0,
+            'ufCrm48Price' => $property['ufCrm37Price'] ?? 0,
+            'ufCrm48LocationPf' => $property['ufCrm37Location'] ?? '',
+            'ufCrm48LocationBayut' => $property['ufCrm37BayutLocation'] ?? '',
+            'ufCrm48Status' => $newStatus,
+            'ufCrm48UnitType' => getPropertyTypeFromId($property['ufCrm37PropertyType'] ?? ''),
+            'ufCrm48OwnerPhone' => $ownerPhone,
+            'ufCrm48OwnerUrl' => $ownerUrl,
+            'stageId' => ($status === 'PUBLISHED') ? "DT1130_63:NEW" : 'DT1130_63:PREPARATION'
+        ];
+
+        if ($existingItem) {
+            $existingId = $existingItem['id'];
+
+            // Check if any fields have changed
+            $hasChanges = false;
+            $changedFields = [];
+
+            // Fields to compare (exclude images for now as they're complex to compare)
+            $fieldsToCompare = [
+                'ufCrm48Status' => $newStatus,
                 'ufCrm48ListingTitle' => $property['ufCrm37TitleEn'] ?? '',
                 'ufCrm48AgentName' => $property['ufCrm37AgentName'] ?? '',
                 'ufCrm48OwnerName' => $property['ufCrm37ListingOwner'] ?? '',
-                'ufCrm48PropertyImages' => $formattedImages,
                 'ufCrm48Bedrooms' => $property['ufCrm37Bedroom'] ?? 0,
                 'ufCrm48Bathrooms' => $property['ufCrm37Bathroom'] ?? 0,
                 'ufCrm48Size' => $property['ufCrm37Size'] ?? 0,
                 'ufCrm48Price' => $property['ufCrm37Price'] ?? 0,
                 'ufCrm48LocationPf' => $property['ufCrm37Location'] ?? '',
                 'ufCrm48LocationBayut' => $property['ufCrm37BayutLocation'] ?? '',
-                'ufCrm48Status' => $newStatus,
-                'ufCrm48UnitType' => getPropertyTypeFromId($property['ufCrm37PropertyType'] ?? ''),
-                'ufCrm48OwnerPhone' => $ownerPhone,
-                'ufCrm48OwnerUrl' => $ownerUrl,
-                'stageId' => ($status === 'PUBLISHED') ? "DT1130_63:NEW" : 'DT1130_63:PREPARATION'
-            ]
+                'ufCrm48UnitType' => getPropertyTypeFromId($property['ufCrm37PropertyType'] ?? '')
+            ];
+
+            foreach ($fieldsToCompare as $field => $newValue) {
+                if ((string)($existingItem[$field] ?? '') !== (string)$newValue) {
+                    $hasChanges = true;
+                    $changedFields[$field] = [
+                        'old' => $existingItem[$field] ?? '',
+                        'new' => $newValue
+                    ];
+                }
+            }
+
+            // Always update images as they're hard to compare
+            $fieldsToUpdate = $updatedFields;
+
+            if ($hasChanges) {
+                echo "Found changes for {$referenceNumber}: " . json_encode($changedFields) . "</br>";
+
+                $response = CRest::call('crm.item.update', [
+                    'entityTypeId' => DNT_ENTITY_TYPE_ID,
+                    'id' => $existingId,
+                    'fields' => $fieldsToUpdate
+                ]);
+
+                if (isset($response['error'])) {
+                    echo "Error updating property: " . $response['error_description'] . "</br>";
+                } elseif (!empty($response['result'])) {
+                    echo "Updated property fields for: {$referenceNumber}</br>";
+                } else {
+                    echo "Failed to update fields for: {$referenceNumber}</br>";
+                }
+            } else {
+                echo "No changes detected for {$referenceNumber}, skipping update</br>";
+            }
+
+            return;
+        }
+
+        // If we reach here, it's a new record to add
+        $response = CRest::call('crm.item.add', [
+            'entityTypeId' => DNT_ENTITY_TYPE_ID,
+            'fields' => $updatedFields
         ]);
 
         if (isset($response['error'])) {
