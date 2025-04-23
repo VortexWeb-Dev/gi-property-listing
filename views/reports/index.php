@@ -10,31 +10,26 @@
             <div class="flex justify-center sm:justify-end items-center gap-x-4 mt-3 sm:mt-6">
                 <div class="inline-flex items-center">
                     <span class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-
                         Sale <span id="residential-sale"></span>
                     </span>
                 </div>
                 <div class="inline-flex items-center">
                     <span class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-
                         Rent <span id="residential-rent"></span>
                     </span>
                 </div>
                 <div class="inline-flex items-center">
                     <span class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-
                         PF <span id="residential-property-finder"></span>
                     </span>
                 </div>
                 <div class="inline-flex items-center">
                     <span class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-
                         Bayut <span id="residential-bayut"></span>
                     </span>
                 </div>
                 <div class="inline-flex items-center">
                     <span class="inline-flex items-center gap-x-1.5 py-1.5 px-3 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-
                         Dubizzle <span id="residential-dubizzle"></span>
                     </span>
                 </div>
@@ -93,210 +88,327 @@
 <script>
     window.addEventListener('load', async () => {
         // Fetch data for Apex Doughnut Chart
-        let baseUrl = API_BASE_URL;
-        let properties = [];
-        const response = await fetch(`${baseUrl}/crm.item.list?entityTypeId=${LISTINGS_ENTITY_TYPE_ID}&select[0]=ufCrm37OfferingType&select[1]=ufCrm37PfEnable&select[2]=ufCrm37BayutEnable&select[3]=ufCrm37DubizzleEnable&select[4]=ufCrm37WebsiteEnable`);
-        const data = await response.json();
-        const totalOwners = data.total;
-
-        for (let i = 0; i < Math.ceil(totalOwners / 50); i++) {
-            const response = await fetch(`${baseUrl}/crm.item.list?entityTypeId=${LISTINGS_ENTITY_TYPE_ID}&select[0]=ufCrm37OfferingType&select[1]=ufCrm37PfEnable&select[2]=ufCrm37BayutEnable&select[3]=ufCrm37DubizzleEnable&select[4]=ufCrm37WebsiteEnable&start=${i * 50}`);
-            const data = await response.json();
-            properties = properties.concat(data.result.items);
-        }
-
-        let residentialSale = 0;
-        let residentialRent = 0;
-        let residentialPropertyFinder = 0;
-        let residentialBayut = 0;
-        let residentialDubizzle = 0;
-        let residentialWebsite = 0;
-
-        let commercialSale = 0;
-        let commercialRent = 0;
-        let commercialPropertyFinder = 0;
-        let commercialBayut = 0;
-        let commercialDubizzle = 0;
-        let commercialWebsite = 0;
-
-        properties.forEach(property => {
-            if (property['ufCrm37OfferingType'] === 'RS' || property['offeringType'] === 'RR') {
-                // Residential
-                if (property['ufCrm37PfEnable']) residentialPropertyFinder++;
-                if (property['ufCrm37BayutEnable']) residentialBayut++;
-                if (property['ufCrm37DubizzleEnable']) residentialDubizzle++;
-                if (property['ufCrm37WebsiteEnable']) residentialWebsite++;
-                if (property['ufCrm37OfferingType'] === 'RS') {
-                    residentialSale++;
-                } else {
-                    residentialRent++;
+        const filters = [{
+                label: 'residentialSale',
+                filter: {
+                    'ufCrm37OfferingType': 'RS',
+                    'ufCrm37Status': 'PUBLISHED'
                 }
-            } else if (property['ufCrm37OfferingType'] === 'CS' || property['offeringType'] === 'CR') {
-                // Commercial
-                if (property['ufCrm37PfEnable']) commercialPropertyFinder++;
-                if (property['ufCrm37BayutEnable']) commercialBayut++;
-                if (property['ufCrm37DubizzleEnable']) commercialDubizzle++;
-                if (property['ufCrm37WebsiteEnable']) commercialWebsite++;
-                if (property['ufCrm37OfferingType'] === 'CS') {
-                    commercialSale++;
-                } else {
-                    commercialRent++;
+            },
+            {
+                label: 'residentialRent',
+                filter: {
+                    'ufCrm37OfferingType': 'RR',
+                    'ufCrm37Status': 'PUBLISHED'
+                }
+            },
+            {
+                label: 'residentialPropertyFinder',
+                filter: {
+                    'ufCrm37Status': 'PUBLISHED',
+                    'ufCrm37PfEnable': true,
+                    'ufCrm37OfferingType': ['RS', 'RR']
+                }
+            },
+            {
+                label: 'residentialBayut',
+                filter: {
+                    'ufCrm37Status': 'PUBLISHED',
+                    'ufCrm37BayutEnable': true,
+                    'ufCrm37OfferingType': ['RS', 'RR']
+                }
+            },
+            {
+                label: 'residentialDubizzle',
+                filter: {
+                    'ufCrm37Status': 'PUBLISHED',
+                    'ufCrm37DubizzleEnable': true,
+                    'ufCrm37OfferingType': ['RS', 'RR']
+                }
+            },
+            {
+                label: 'residentialWebsite',
+                filter: {
+                    'ufCrm37Status': 'PUBLISHED',
+                    'ufCrm37WebsiteEnable': true,
+                    'ufCrm37OfferingType': ['RS', 'RR']
+                }
+            },
+            {
+                label: 'commercialSale',
+                filter: {
+                    'ufCrm37OfferingType': 'CS',
+                    'ufCrm37Status': 'PUBLISHED'
+                }
+            },
+            {
+                label: 'commercialRent',
+                filter: {
+                    'ufCrm37OfferingType': 'CR',
+                    'ufCrm37Status': 'PUBLISHED'
+                }
+            },
+            {
+                label: 'commercialPropertyFinder',
+                filter: {
+                    'ufCrm37Status': 'PUBLISHED',
+                    'ufCrm37PfEnable': true,
+                    'ufCrm37OfferingType': ['CS', 'CR']
+                }
+            },
+            {
+                label: 'commercialBayut',
+                filter: {
+                    'ufCrm37Status': 'PUBLISHED',
+                    'ufCrm37BayutEnable': true,
+                    'ufCrm37OfferingType': ['CS', 'CR']
+                }
+            },
+            {
+                label: 'commercialDubizzle',
+                filter: {
+                    'ufCrm37Status': 'PUBLISHED',
+                    'ufCrm37DubizzleEnable': true,
+                    'ufCrm37OfferingType': ['CS', 'CR']
+                }
+            },
+            {
+                label: 'commercialWebsite',
+                filter: {
+                    'ufCrm37Status': 'PUBLISHED',
+                    'ufCrm37WebsiteEnable': true,
+                    'ufCrm37OfferingType': ['CS', 'CR']
                 }
             }
-        });
+        ];
 
-        if (residentialSale === 0 && residentialRent === 0 && residentialPropertyFinder === 0 && residentialBayut === 0 && residentialDubizzle === 0 && residentialWebsite === 0) {
+        let stats = {};
+
+        // Fetch data for each filter
+        try {
+            for (const {
+                    label,
+                    filter
+                }
+                of filters) {
+                const response = await fetch(`${API_BASE_URL}/crm.item.list`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        entityTypeId: LISTINGS_ENTITY_TYPE_ID,
+                        filter,
+                        select: ['id']
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API request failed for ${label}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                stats[label] = data.total ?? (data.result?.items?.length || 0);
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            // Display error message in charts
+            document.getElementById('hs-doughnut-chart').innerHTML = '<p class="text-sm text-center text-red-600">Error loading data</p>';
+            document.getElementById('hs-doughnut-chart-2').innerHTML = '<p class="text-sm text-center text-red-600">Error loading data</p>';
+            return;
+        }
+
+        console.log('Stats:', stats);
+
+        // Check for no data in Residential
+        if (
+            stats.residentialSale === 0 &&
+            stats.residentialRent === 0 &&
+            stats.residentialPropertyFinder === 0 &&
+            stats.residentialBayut === 0 &&
+            stats.residentialDubizzle === 0 &&
+            stats.residentialWebsite === 0
+        ) {
             document.getElementById('hs-doughnut-chart').innerHTML = '<p class="text-sm text-center text-gray-600">No data found</p>';
         }
 
-        if (commercialSale === 0 && commercialRent === 0 && commercialPropertyFinder === 0 && commercialBayut === 0 && commercialDubizzle === 0 && commercialWebsite === 0) {
+        // Check for no data in Commercial
+        if (
+            stats.commercialSale === 0 &&
+            stats.commercialRent === 0 &&
+            stats.commercialPropertyFinder === 0 &&
+            stats.commercialBayut === 0 &&
+            stats.commercialDubizzle === 0 &&
+            stats.commercialWebsite === 0
+        ) {
             document.getElementById('hs-doughnut-chart-2').innerHTML = '<p class="text-sm text-center text-gray-600">No data found</p>';
         }
 
-        document.getElementById('residential-sale').textContent = residentialSale;
-        document.getElementById('residential-rent').textContent = residentialRent;
-        document.getElementById('residential-property-finder').textContent = residentialPropertyFinder;
-        document.getElementById('residential-bayut').textContent = residentialBayut;
-        document.getElementById('residential-dubizzle').textContent = residentialDubizzle;
-        document.getElementById('residential-website').textContent = residentialWebsite;
+        // Update DOM with stats
+        document.getElementById('residential-sale').textContent = stats.residentialSale || 0;
+        document.getElementById('residential-rent').textContent = stats.residentialRent || 0;
+        document.getElementById('residential-property-finder').textContent = stats.residentialPropertyFinder || 0;
+        document.getElementById('residential-bayut').textContent = stats.residentialBayut || 0;
+        document.getElementById('residential-dubizzle').textContent = stats.residentialDubizzle || 0;
+        document.getElementById('residential-website').textContent = stats.residentialWebsite || 0;
 
-        document.getElementById('commercial-sale').textContent = commercialSale;
-        document.getElementById('commercial-rent').textContent = commercialRent;
-        document.getElementById('commercial-property-finder').textContent = commercialPropertyFinder;
-        document.getElementById('commercial-bayut').textContent = commercialBayut;
-        document.getElementById('commercial-dubizzle').textContent = commercialDubizzle;
-        document.getElementById('commercial-website').textContent = commercialWebsite;
+        document.getElementById('commercial-sale').textContent = stats.commercialSale || 0;
+        document.getElementById('commercial-rent').textContent = stats.commercialRent || 0;
+        document.getElementById('commercial-property-finder').textContent = stats.commercialPropertyFinder || 0;
+        document.getElementById('commercial-bayut').textContent = stats.commercialBayut || 0;
+        document.getElementById('commercial-dubizzle').textContent = stats.commercialDubizzle || 0;
+        document.getElementById('commercial-website').textContent = stats.commercialWebsite || 0;
 
-        // Apex Doughnut Chart
-        (function() {
-            // Residential
-            buildChart('#hs-doughnut-chart', (mode) => ({
-                chart: {
-                    height: 230,
-                    width: 230,
-                    type: 'donut',
-                    zoom: {
+        // Apex Doughnut Chart - Residential
+        if (document.getElementById('hs-doughnut-chart').innerHTML === '') {
+            buildChart(
+                '#hs-doughnut-chart',
+                (mode) => ({
+                    chart: {
+                        height: 230,
+                        width: 230,
+                        type: 'donut',
+                        zoom: {
+                            enabled: false
+                        }
+                    },
+                    plotOptions: {
+                        pie: {
+                            donut: {
+                                size: '76%'
+                            }
+                        }
+                    },
+                    series: [
+                        stats.residentialSale || 0,
+                        stats.residentialRent || 0,
+                        stats.residentialPropertyFinder || 0,
+                        stats.residentialBayut || 0,
+                        stats.residentialDubizzle || 0,
+                        stats.residentialWebsite || 0
+                    ],
+                    labels: ['Sale', 'Rent', 'PF', 'Bayut', 'Dubizzle', 'Website'],
+                    legend: {
+                        show: false
+                    },
+                    dataLabels: {
                         enabled: false
-                    }
-                },
-                plotOptions: {
-                    pie: {
-                        donut: {
-                            size: '76%'
+                    },
+                    stroke: {
+                        width: 5
+                    },
+                    grid: {
+                        padding: {
+                            top: -12,
+                            bottom: -11,
+                            left: -12,
+                            right: -12
+                        }
+                    },
+                    states: {
+                        hover: {
+                            filter: {
+                                type: 'none'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        enabled: true,
+                        custom: function(props) {
+                            return buildTooltipForDonut(
+                                props,
+                                mode === 'dark' ? ['#fff', '#fff', '#000', '#000', '#000', '#000'] : ['#fff', '#fff', '#000', '#000', '#000', '#000']
+                            );
                         }
                     }
-                },
-                series: [residentialSale || 0, residentialRent || 0, residentialPropertyFinder || 0, residentialBayut || 0, residentialDubizzle || 0, residentialWebsite || 0],
-                labels: ['Sale', 'Rent', 'PF', 'Bayut', 'Dubizzle', 'Website'],
-                legend: {
-                    show: false
-                },
-                dataLabels: {
-                    enabled: false
-                },
-                stroke: {
-                    width: 5
-                },
-                grid: {
-                    padding: {
-                        top: -12,
-                        bottom: -11,
-                        left: -12,
-                        right: -12
+                }), {
+                    colors: ['#3b82f6', '#22d3ee', '#f97316', '#10b981', '#8b5cf6', '#ec4899'],
+                    stroke: {
+                        colors: ['rgb(255, 255, 255)']
                     }
-                },
-                states: {
-                    hover: {
-                        filter: {
-                            type: 'none'
+                }, {
+                    colors: ['#2563eb', '#06b6d4', '#ea580c', '#059669', '#7c3aed', '#db2777'],
+                    stroke: {
+                        colors: ['rgb(38, 38, 38)']
+                    }
+                }
+            );
+        }
+
+        // Apex Doughnut Chart - Commercial
+        if (document.getElementById('hs-doughnut-chart-2').innerHTML === '') {
+            buildChart(
+                '#hs-doughnut-chart-2',
+                (mode) => ({
+                    chart: {
+                        height: 230,
+                        width: 230,
+                        type: 'donut',
+                        zoom: {
+                            enabled: false
                         }
-                    }
-                },
-                tooltip: {
-                    enabled: true,
-                    custom: function(props) {
-                        return buildTooltipForDonut(
-                            props,
-                            mode === 'dark' ? ['#fff', '#fff', '#000', '#000', '#000', '#000'] : ['#fff', '#fff', '#000', '#000', '#000', '#000']
-                        );
-                    }
-                }
-            }), {
-                colors: ['#3b82f6', '#22d3ee', '#f97316', '#10b981', '#8b5cf6', '#ec4899'], // Distinct colors for each label
-                stroke: {
-                    colors: ['rgb(255, 255, 255)'] // Stroke for light mode
-                }
-            }, {
-                colors: ['#2563eb', '#06b6d4', '#ea580c', '#059669', '#7c3aed', '#db2777'], // Distinct colors for dark mode
-                stroke: {
-                    colors: ['rgb(38, 38, 38)'] // Stroke for dark mode
-                }
-            });
-        })();
-        (function() {
-            // Commercial
-            buildChart('#hs-doughnut-chart-2', (mode) => ({
-                chart: {
-                    height: 230,
-                    width: 230,
-                    type: 'donut',
-                    zoom: {
+                    },
+                    plotOptions: {
+                        pie: {
+                            donut: {
+                                size: '76%'
+                            }
+                        }
+                    },
+                    series: [
+                        stats.commercialSale || 0,
+                        stats.commercialRent || 0,
+                        stats.commercialPropertyFinder || 0,
+                        stats.commercialBayut || 0,
+                        stats.commercialDubizzle || 0,
+                        stats.commercialWebsite || 0
+                    ],
+                    labels: ['Sale', 'Rent', 'PF', 'Bayut', 'Dubizzle', 'Website'],
+                    legend: {
+                        show: false
+                    },
+                    dataLabels: {
                         enabled: false
-                    }
-                },
-                plotOptions: {
-                    pie: {
-                        donut: {
-                            size: '76%'
+                    },
+                    stroke: {
+                        width: 5
+                    },
+                    grid: {
+                        padding: {
+                            top: -12,
+                            bottom: -11,
+                            left: -12,
+                            right: -12
+                        }
+                    },
+                    states: {
+                        hover: {
+                            filter: {
+                                type: 'none'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        enabled: true,
+                        custom: function(props) {
+                            return buildTooltipForDonut(
+                                props,
+                                mode === 'dark' ? ['#fff', '#fff', '#000', '#000', '#000', '#000'] : ['#fff', '#fff', '#000', '#000', '#000', '#000']
+                            );
                         }
                     }
-                },
-                series: [commercialSale || 0, commercialRent || 0, commercialPropertyFinder || 0, commercialBayut || 0, commercialDubizzle || 0, commercialWebsite || 0],
-                labels: ['Sale', 'Rent', 'PF', 'Bayut', 'Dubizzle', 'Website'],
-                legend: {
-                    show: false
-                },
-                dataLabels: {
-                    enabled: false
-                },
-                stroke: {
-                    width: 5
-                },
-                grid: {
-                    padding: {
-                        top: -12,
-                        bottom: -11,
-                        left: -12,
-                        right: -12
+                }), {
+                    colors: ['#3b82f6', '#22d3ee', '#f97316', '#10b981', '#8b5cf6', '#ec4899'],
+                    stroke: {
+                        colors: ['rgb(255, 255, 255)']
                     }
-                },
-                states: {
-                    hover: {
-                        filter: {
-                            type: 'none'
-                        }
-                    }
-                },
-                tooltip: {
-                    enabled: true,
-                    custom: function(props) {
-                        return buildTooltipForDonut(
-                            props,
-                            mode === 'dark' ? ['#fff', '#fff', '#000', '#000', '#000', '#000'] : ['#fff', '#fff', '#000', '#000', '#000', '#000']
-                        );
+                }, {
+                    colors: ['#2563eb', '#06b6d4', '#ea580c', '#059669', '#7c3aed', '#db2777'],
+                    stroke: {
+                        colors: ['rgb(38, 38, 38)']
                     }
                 }
-            }), {
-                colors: ['#3b82f6', '#22d3ee', '#f97316', '#10b981', '#8b5cf6', '#ec4899'], // Distinct colors for each label
-                stroke: {
-                    colors: ['rgb(255, 255, 255)'] // Stroke for light mode
-                }
-            }, {
-                colors: ['#2563eb', '#06b6d4', '#ea580c', '#059669', '#7c3aed', '#db2777'], // Distinct colors for dark mode
-                stroke: {
-                    colors: ['rgb(38, 38, 38)'] // Stroke for dark mode
-                }
-            });
-        })();
+            );
+        }
     });
 </script>
