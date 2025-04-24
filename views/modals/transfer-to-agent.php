@@ -15,6 +15,7 @@
                         <select id="listing_agent" name="listing_agent" class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" required>
                             <option value="">Please select</option>
                             <?php
+                            define('C_REST_WEB_HOOK_URL', 'https://gicrm.ae/rest/1945/7mnw3te56u363prw/');
                             $agents_result = CRest::call('crm.item.list', [
                                 'entityTypeId' => AGENTS_ENTITY_TYPE_ID,
                                 'select' => ['ufCrm38AgentId', 'ufCrm38AgentName']
