@@ -69,7 +69,7 @@
             console.error('Error:', error);
         }
     }
-    
+
     async function handleTransferOwnerSubmit(e) {
         document.getElementById("transferOwnerBtn").disabled = true;
         document.getElementById("transferOwnerBtn").innerHTML = 'Transferring...';
@@ -88,6 +88,6 @@
             await updateItem(LISTINGS_ENTITY_TYPE_ID, fields, Number(id));
         }
 
-        window.location.href = '?page=properties';
+        window.location.replace('?page=properties');
     }
 </script>

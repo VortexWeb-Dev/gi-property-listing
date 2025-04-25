@@ -94,6 +94,6 @@
             await updateItem(LISTINGS_ENTITY_TYPE_ID, fields, Number(id));
         }
 
-        window.location.href = '?page=properties';
+        window.location.replace('?page=properties');
     }
 </script>
