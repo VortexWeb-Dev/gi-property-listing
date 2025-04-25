@@ -46,10 +46,10 @@
     <?php include 'views/modals/filter.php'; ?>
     <?php include 'views/modals/refresh-listing.php'; ?>
     <?php
-    if ($isAdmin) {
+    // if ($isAdmin) {
         include 'views/modals/transfer-to-agent.php';
         include 'views/modals/transfer-to-owner.php';
-    }
+    // }
     ?>
 </div>
 
