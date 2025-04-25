@@ -1485,6 +1485,9 @@
     // Function to select and add properties to agent transfer form
     function selectAndAddPropertiesToAgentTransfer() {
         var checkboxes = document.querySelectorAll('input[name="property_ids[]"]:checked');
+        if(checkboxes.length == 0){
+            return alert('Please select at least one property or try refreshing the page.');
+        }
         var propertyIds = Array.from(checkboxes).map(checkbox => checkbox.value);
 
         if (!isPropertySelected()) {
