@@ -88,11 +88,13 @@
             "ufCrm37AgentLicense": agent.ufCrm38AgentLicense
         };
 
-        const propertyIds = formData.get('transferAgentPropertyIds').split(',');
+        const propertyIds = formData.get('transferAgentPropertyIds').split(',') || JSON.parse(localStorage.getItem('transferAgentPropertyIds')) || [];
 
         for (const id of propertyIds) {
             await updateItem(LISTINGS_ENTITY_TYPE_ID, fields, Number(id));
         }
+
+        localStorage.removeItem('transferAgentPropertyIds');
 
         window.location.replace('?page=properties');
     }

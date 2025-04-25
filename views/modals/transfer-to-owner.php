@@ -82,11 +82,13 @@
             "ufCrm37ListingOwner": formData.get('listing_owner'),
         };
 
-        const propertyIds = formData.get('transferOwnerPropertyIds').split(',');
+        const propertyIds = formData.get('transferOwnerPropertyIds').split(',') || JSON.parse(localStorage.getItem('transferOwnerPropertyIds')) || [];
 
         for (const id of propertyIds) {
             await updateItem(LISTINGS_ENTITY_TYPE_ID, fields, Number(id));
         }
+
+        localStorage.removeItem('transferOwnerPropertyIds');
 
         window.location.replace('?page=properties');
     }
