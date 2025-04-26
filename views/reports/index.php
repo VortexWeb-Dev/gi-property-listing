@@ -97,6 +97,13 @@
 
         // Fetch data for charts
         const filters = [{
+                label: 'residential',
+                filter: {
+                    'ufCrm37Status': 'PUBLISHED',
+                    'ufCrm37OfferingType': ['RS', 'RR']
+                }
+            },
+            {
                 label: 'residentialSale',
                 filter: {
                     'ufCrm37OfferingType': 'RS',
@@ -140,6 +147,13 @@
                     'ufCrm37Status': 'PUBLISHED',
                     'ufCrm37WebsiteEnable': true,
                     'ufCrm37OfferingType': ['RS', 'RR']
+                }
+            },
+            {
+                label: 'commercial',
+                filter: {
+                    'ufCrm37Status': 'PUBLISHED',
+                    'ufCrm37OfferingType': ['CS', 'CR']
                 }
             },
             {
@@ -192,32 +206,12 @@
 
         let stats = {};
 
-        // Simulate API fetch with timeout for demo
         try {
-            // In a real implementation, you would use this loop to fetch actual data
-            setTimeout(() => {
-                // Mock data for demonstration
-                stats = {
-                    residentialSale: 45,
-                    residentialRent: 68,
-                    residentialPropertyFinder: 38,
-                    residentialBayut: 29,
-                    residentialDubizzle: 42,
-                    residentialWebsite: 56,
-                    commercialSale: 22,
-                    commercialRent: 34,
-                    commercialPropertyFinder: 18,
-                    commercialBayut: 15,
-                    commercialDubizzle: 27,
-                    commercialWebsite: 31
-                };
-
-                renderCharts(stats);
-            }, 1500); // Simulate API delay
-
-            // This is where your actual API calls would go for real data:
-            /*
-            for (const { label, filter } of filters) {
+            for (const {
+                    label,
+                    filter
+                }
+                of filters) {
                 const response = await fetch(`${API_BASE_URL}/crm.item.list`, {
                     method: 'POST',
                     headers: {
@@ -238,7 +232,6 @@
                 stats[label] = data.total ?? (data.result?.items?.length || 0);
             }
             renderCharts(stats);
-            */
 
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -285,6 +278,7 @@
             // Create modern donut charts
             if (hasResidentialData) {
                 createDonutChart('residential-chart', [
+                    stats.residential || 0,
                     stats.residentialSale || 0,
                     stats.residentialRent || 0,
                     stats.residentialPropertyFinder || 0,
@@ -296,6 +290,7 @@
 
             if (hasCommercialData) {
                 createDonutChart('commercial-chart', [
+                    stats.commercial || 0,
                     stats.commercialSale || 0,
                     stats.commercialRent || 0,
                     stats.commercialPropertyFinder || 0,
@@ -307,6 +302,14 @@
         }
 
         function createDonutChart(elementId, seriesData) {
+            // Calculate the correct total based on which chart we're rendering
+            let correctTotal;
+            if (elementId === 'residential-chart') {
+                correctTotal = stats.residential;
+            } else {
+                correctTotal = stats.commercial;
+            }
+
             const options = {
                 series: seriesData,
                 chart: {
@@ -349,8 +352,9 @@
                                     fontSize: '16px',
                                     fontWeight: 600,
                                     color: '#374151',
-                                    formatter: function(w) {
-                                        return w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                                    formatter: function() {
+                                        // Return our pre-calculated correct total
+                                        return correctTotal;
                                     }
                                 },
                                 value: {
