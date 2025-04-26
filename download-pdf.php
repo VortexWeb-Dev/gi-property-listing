@@ -6,6 +6,8 @@ require __DIR__ . "/crest/settings.php";
 require __DIR__ . "/utils/index.php";
 require __DIR__ . "/vendor/autoload.php";
 
+define('C_REST_WEB_HOOK_URL', 'https://gicrm.ae/rest/1945/7mnw3te56u363prw/');
+
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
