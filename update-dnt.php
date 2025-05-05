@@ -274,6 +274,7 @@ function addToDnt($property)
             'ufCrm48LocationPf' => $property['ufCrm37Location'] ?? '',
             'ufCrm48LocationBayut' => $property['ufCrm37BayutLocation'] ?? '',
             'ufCrm48Status' => $newStatus,
+            'ufCrm48ProjectStatus' => $property['ufCrm37ProjectStatus'] ?? '',
             'ufCrm48UnitType' => getPropertyTypeFromId($property['ufCrm37PropertyType'] ?? ''),
             'ufCrm48OwnerPhone' => $ownerPhone,
             'stageId' => ($status === 'PUBLISHED') ? "DT1130_63:NEW" : 'DT1130_63:PREPARATION'
