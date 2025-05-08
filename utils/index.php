@@ -164,6 +164,11 @@ function getPropertyType($property)
     return $baseType;
 }
 
+function getSaleorRent($offeringType)
+{
+    return ($offeringType == 'RR' || $offeringType == 'CR') ? 'Rent' : 'Sale';
+}
+
 function getPropertyTypeFromId($typeId)
 {
     $property_types = array(

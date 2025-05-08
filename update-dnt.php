@@ -143,7 +143,8 @@ function getLatestProperties()
                 'ufCrm37Price',
                 'ufCrm37Location',
                 'ufCrm37BayutLocation',
-                'ufCrm37PropertyType'
+                'ufCrm37PropertyType',
+                'ufCrm37OfferingType',
             ],
             'filter' => ['>updatedTime' => $fiveMinutesAgo]
         ]);
@@ -276,6 +277,7 @@ function addToDnt($property)
             'ufCrm48Status' => $newStatus,
             'ufCrm48ProjectStatus' => $property['ufCrm37ProjectStatus'] ?? '',
             'ufCrm48UnitType' => getPropertyTypeFromId($property['ufCrm37PropertyType'] ?? ''),
+            'ufCrm48OfferingType' => getSaleorRent($property['ufCrm37OfferingType']) ?? '',
             'ufCrm48OwnerPhone' => $ownerPhone,
             'stageId' => ($status === 'PUBLISHED') ? "DT1130_63:NEW" : 'DT1130_63:PREPARATION'
         ];
