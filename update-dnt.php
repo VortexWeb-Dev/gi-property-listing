@@ -143,6 +143,7 @@ function getLatestProperties()
                 'ufCrm37Price',
                 'ufCrm37Location',
                 'ufCrm37BayutLocation',
+                'ufCrm37ProjectStatus',
                 'ufCrm37PropertyType',
                 'ufCrm37OfferingType',
             ],
